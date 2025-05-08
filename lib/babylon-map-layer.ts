@@ -1,13 +1,13 @@
-import * as mapboxgl from "mapbox-gl";
 import * as BABYLON from '@babylonjs/core';
 import { GLTFFileLoader } from "@babylonjs/loaders";
-import { GeoMesh } from '../types/geomesh';
+import { GeoMesh } from './geomesh';
+import { IMap } from './types';
 
-export class MapboxBabylonLayer implements mapboxgl.CustomLayerInterface {
+export class BabylonMapLayer {
     readonly type: "custom" = "custom";
     readonly renderingMode?: "2d" | "3d" | undefined = "3d";
 
-    private declare map: mapboxgl.Map;
+    private declare map: IMap;
     private declare bjsEngine: BABYLON.Engine;
     private geoMeshes = new Map<string, GeoMesh>();
 
@@ -18,9 +18,11 @@ export class MapboxBabylonLayer implements mapboxgl.CustomLayerInterface {
         BABYLON.RegisterSceneLoaderPlugin(new GLTFFileLoader());
     }
 
-    render(gl: WebGL2RenderingContext, matrix: Array<number>, projection?: mapboxgl.ProjectionSpecification, projectionToMercatorMatrix?: Array<number>, projectionToMercatorTransition?: number, centerInMercator?: Array<number>, pixelsPerMeterRatio?: number) {
+    render(gl: WebGLRenderingContext | WebGL2RenderingContext, args: Array<number> | { defaultProjectionData: { mainMatrix: [number, number, number, number, number, number, number, number, number, number, number, number, number, number, number, number] | Float32Array<ArrayBufferLike> } }) {
+        const matrix = args instanceof Array ? args : args.defaultProjectionData.mainMatrix;
+        const cameraMatrix = BABYLON.Matrix.FromArray(matrix);
+
         this.geoMeshes.forEach(geoMesh => {
-            const cameraMatrix = BABYLON.Matrix.FromArray(matrix);
             const wvpMatrix = geoMesh.worldMatrix.multiply(cameraMatrix);
             geoMesh.camera.freezeProjectionMatrix(wvpMatrix);
             geoMesh.scene.render(false);
@@ -29,7 +31,7 @@ export class MapboxBabylonLayer implements mapboxgl.CustomLayerInterface {
         this.map.triggerRepaint();
     }
 
-    onAdd(map: mapboxgl.Map, gl: WebGL2RenderingContext) {
+    onAdd(map: IMap, gl: WebGL2RenderingContext) {
         this.map = map;
 
         this.bjsEngine = new BABYLON.Engine(
@@ -41,7 +43,7 @@ export class MapboxBabylonLayer implements mapboxgl.CustomLayerInterface {
             true
         );
     }
-    onRemove(map: mapboxgl.Map, gl: WebGL2RenderingContext) {
+    onRemove(map: IMap, gl: WebGL2RenderingContext) {
 
     }
 
@@ -61,9 +63,13 @@ export class MapboxBabylonLayer implements mapboxgl.CustomLayerInterface {
         return this.addGeoMesh(id, rootMesh, position);
     }
 
-    addGeoMesh(id: string, mesh: BABYLON.AbstractMesh, position: [number, number, number]) {
-        const geoMesh =  new GeoMesh(mesh, position);
-        this.geoMeshes.set(id,geoMesh);
+    private addGeoMesh(id: string, mesh: BABYLON.AbstractMesh, position: [number, number, number]) {
+        const geoMesh = new GeoMesh(mesh, position);
+        this.geoMeshes.set(id, geoMesh);
         return geoMesh;
+    }
+
+    getGeoMesh(id: string){
+        return this.geoMeshes.get(id);
     }
 }

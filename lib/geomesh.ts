@@ -1,12 +1,14 @@
 import * as BABYLON from '@babylonjs/core';
 
-import { MercatorCoordinate } from '../utils/mercator-coordinate';
+import { MercatorCoordinate } from './mercator-coordinate';
+import { TAxis } from './types';
 
 export class GeoMesh {
+
     /**
      *
      */
-    constructor(readonly mesh: BABYLON.AbstractMesh, private position: [number, number, number]) {
+    constructor(readonly mesh: BABYLON.AbstractMesh, private _position: [number, number, number]) {
 
     }
 
@@ -14,7 +16,7 @@ export class GeoMesh {
         return this.mesh._scene;
     }
 
-    get camera(){
+    get camera() {
         return this.scene.activeCamera!;
     }
 
@@ -46,6 +48,10 @@ export class GeoMesh {
             ));
     }
 
+    get position() {
+        return this._position;
+    }
+
     setLngLat(lnglat: [number, number]) {
         this.position[0] = lnglat[0];
         this.position[1] = lnglat[1];
@@ -53,5 +59,26 @@ export class GeoMesh {
 
     setAltitude(altitude: number) {
         this.position[2] = altitude;
+    }
+
+    setRotation(axis: TAxis, value: number) {
+        this.mesh.rotation[axis] = value;
+    }
+
+    setBoundingBoxVisible(value: boolean) {
+        this.foreachMesh(m => {
+            m.showBoundingBox = value;
+        });
+    }
+
+    toggleBoundingBoxVisible() {
+        this.foreachMesh(m => {
+            m.showBoundingBox = !m.showBoundingBox;
+        });
+    }
+    
+
+    foreachMesh(callbackfn: (value: BABYLON.AbstractMesh, index: number, array: BABYLON.AbstractMesh[]) => void) {
+        this.mesh.getChildMeshes().forEach(callbackfn);
     }
 }
