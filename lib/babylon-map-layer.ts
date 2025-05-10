@@ -1,7 +1,6 @@
 import * as BABYLON from '@babylonjs/core';
 import { GLTFFileLoader } from "@babylonjs/loaders";
 import { GeoMesh } from './geomesh';
-import { IMap } from './types';
 
 export class BabylonMapLayer {
     readonly type: "custom" = "custom";
@@ -47,20 +46,24 @@ export class BabylonMapLayer {
 
     }
 
-    async addGltfModal(id: string, url: string, position: [number, number, number]) {
-        const scene = new BABYLON.Scene(this.bjsEngine);
-        scene.autoClear = false;
-        scene.detachControl();
-        scene.beforeRender = () => {
-            this.bjsEngine.wipeCaches(true);
-        };
-        scene.createDefaultCameraOrLight();
+    
+    getGeoMesh(id: string){
+        return this.geoMeshes.get(id);
+    }
 
+    async addGltfModal(id: string, url: string, position: [number, number, number]) {
+        const scene = this.createScene();
         const container = await BABYLON.LoadAssetContainerAsync(url, scene);
         const rootMesh = container.createRootMesh();
         container.addAllToScene();
 
         return this.addGeoMesh(id, rootMesh, position);
+    }
+
+    async addMesh(id: string, mesh: BABYLON.AbstractMesh, position: [number, number, number]){
+        const scene = this.createScene();
+        scene.addMesh(mesh);
+        return this.addGeoMesh(id, mesh, position);
     }
 
     private addGeoMesh(id: string, mesh: BABYLON.AbstractMesh, position: [number, number, number]) {
@@ -69,7 +72,15 @@ export class BabylonMapLayer {
         return geoMesh;
     }
 
-    getGeoMesh(id: string){
-        return this.geoMeshes.get(id);
+    private createScene(){
+        const scene = new BABYLON.Scene(this.bjsEngine);
+        scene.autoClear = false;
+        scene.detachControl();
+        scene.beforeRender = () => {
+            this.bjsEngine.wipeCaches(true);
+        };
+        scene.createDefaultCameraOrLight();
+
+        return scene;
     }
 }

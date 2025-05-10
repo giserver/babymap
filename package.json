@@ -19,14 +19,22 @@
     "build": "vite build"
   },
   "devDependencies": {
+    "@babylonjs/core": "^8.6.2",
+    "@babylonjs/gui": "^8.7.0",
+    "@babylonjs/gui-editor": "^8.7.0",
+    "@babylonjs/inspector": "^8.7.0",
+    "@babylonjs/loaders": "8.6.2",
+    "@babylonjs/materials": "^8.7.0",
+    "@babylonjs/serializers": "^8.7.0",
     "@vitejs/plugin-vue": "^5.1.4",
+    "mapbox-gl": "3.11.1",
+    "maplibre-gl": "5.5.0",
     "typescript": "~5.7.3",
     "vite": "^6.1.1",
     "vite-plugin-dts": "^4.5.3",
-    "vue": "^3.5.12",
-    "mapbox-gl": "3.11.1",
-    "maplibre-gl": "5.5.0",
-    "@babylonjs/core": "^8.6.2",
-    "@babylonjs/loaders": "8.6.2"
+    "vue": "^3.5.12"
+  },
+  "dependencies": {
+    "babylonjs-toolkits": "^1.0.10"
   }
 }

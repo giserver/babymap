@@ -32,10 +32,39 @@
   resolved "https://registry.npmmirror.com/@babylonjs/core/-/core-8.6.2.tgz#2f8b9860b6d9eeb1dbac2aa1fd0505ba6fe05393"
   integrity sha512-JshRmSYOHVAfcyDeljDT3b7tiXOoYA8W63IZKJWWggT27jePSXsk4MwWbOnm3bqo59n6vkqjhRDnBiTJLbQHag==
 
+"@babylonjs/gui-editor@^8.7.0":
+  version "8.7.0"
+  resolved "https://registry.yarnpkg.com/@babylonjs/gui-editor/-/gui-editor-8.7.0.tgz#3bc1559716aa49242728f874edf22cda0e7135b5"
+  integrity sha512-ibHnOMPz7NjQ1nQ3FarwGqLq/DhIZegg1Rp9G2/j1OWGoJEczibiAOkXHgad8u15zf+2wUXT1XXP42dUM4ttwQ==
+
+"@babylonjs/gui@^8.7.0":
+  version "8.7.0"
+  resolved "https://registry.yarnpkg.com/@babylonjs/gui/-/gui-8.7.0.tgz#bed920c6a108ade2b609728d22b93ea8a14df0a7"
+  integrity sha512-nW7I3jRDs2J2QWtFut/ARQf7JA/GH8OR2LTxjH2q5LcohSGn6qyqzv8T7FVsz8U++AghF/LxKP8BCqcPZu4ihw==
+
+"@babylonjs/inspector@^8.7.0":
+  version "8.7.0"
+  resolved "https://registry.yarnpkg.com/@babylonjs/inspector/-/inspector-8.7.0.tgz#a88866ac5c136aab827f891451de44ba9b420400"
+  integrity sha512-ekToL6byK5pwAj4U6qhfH9e+VDKPDs1RU8AfuJUr+PTqCPPayxwv95TRrmjxEDhF93ZrWk8dKb+mJVyPZ08pOg==
+  dependencies:
+    "@fortawesome/fontawesome-svg-core" "^6.1.0"
+    "@fortawesome/free-regular-svg-icons" "^6.0.0"
+    "@fortawesome/free-solid-svg-icons" "^6.0.0"
+
 "@babylonjs/loaders@8.6.2":
   version "8.6.2"
   resolved "https://registry.npmmirror.com/@babylonjs/loaders/-/loaders-8.6.2.tgz#0354a5ee4b98c6a2b18f83eb7060905d99dc0832"
   integrity sha512-ZdiRXNd9ooSpN47qLZRqZK384lgRf7HojVM28LV9kEqr/b0roJIU3TVzN0znjdGbc3n0D8fUq743OABN9sWGDg==
+
+"@babylonjs/materials@^8.7.0":
+  version "8.7.0"
+  resolved "https://registry.yarnpkg.com/@babylonjs/materials/-/materials-8.7.0.tgz#067ec644b2a709468f5acf013a6c2641c47ae5f7"
+  integrity sha512-v2240oEPEPSOsw9cuQva8Q3yBQvFyCfrkgfWXEDL9fJBmUHmylK6pPZZArwIx4gm50azkpltGjRdcK7R6/vScg==
+
+"@babylonjs/serializers@^8.7.0":
+  version "8.7.0"
+  resolved "https://registry.yarnpkg.com/@babylonjs/serializers/-/serializers-8.7.0.tgz#090a68d00dbc1ccb5d72791861ff9215d2301f61"
+  integrity sha512-4ExD6kwEQ8z7F0UNC2Rkd4irXabvp9Ni5qOKPUqSXT5RHLBU4SLvcNFF222lD7I1QNgluCVVOc887SUD0ZE56w==
 
 "@esbuild/aix-ppc64@0.25.4":
   version "0.25.4"
@@ -161,6 +190,32 @@
   version "0.25.4"
   resolved "https://registry.npmmirror.com/@esbuild/win32-x64/-/win32-x64-0.25.4.tgz#0b17ec8a70b2385827d52314c1253160a0b9bacc"
   integrity sha512-nOT2vZNw6hJ+z43oP1SPea/G/6AbN6X+bGNhNuq8NtRHy4wsMhw765IKLNmnjek7GvjWBYQ8Q5VBoYTFg9y1UQ==
+
+"@fortawesome/fontawesome-common-types@6.7.2":
+  version "6.7.2"
+  resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-common-types/-/fontawesome-common-types-6.7.2.tgz#7123d74b0c1e726794aed1184795dbce12186470"
+  integrity sha512-Zs+YeHUC5fkt7Mg1l6XTniei3k4bwG/yo3iFUtZWd/pMx9g3fdvkSK9E0FOC+++phXOka78uJcYb8JaFkW52Xg==
+
+"@fortawesome/fontawesome-svg-core@^6.1.0":
+  version "6.7.2"
+  resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-svg-core/-/fontawesome-svg-core-6.7.2.tgz#0ac6013724d5cc327c1eb81335b91300a4fce2f2"
+  integrity sha512-yxtOBWDrdi5DD5o1pmVdq3WMCvnobT0LU6R8RyyVXPvFRd2o79/0NCuQoCjNTeZz9EzA9xS3JxNWfv54RIHFEA==
+  dependencies:
+    "@fortawesome/fontawesome-common-types" "6.7.2"
+
+"@fortawesome/free-regular-svg-icons@^6.0.0":
+  version "6.7.2"
+  resolved "https://registry.yarnpkg.com/@fortawesome/free-regular-svg-icons/-/free-regular-svg-icons-6.7.2.tgz#f1651e55e6651a15589b0569516208f9c65f96db"
+  integrity sha512-7Z/ur0gvCMW8G93dXIQOkQqHo2M5HLhYrRVC0//fakJXxcF1VmMPsxnG6Ee8qEylA8b8Q3peQXWMNZ62lYF28g==
+  dependencies:
+    "@fortawesome/fontawesome-common-types" "6.7.2"
+
+"@fortawesome/free-solid-svg-icons@^6.0.0":
+  version "6.7.2"
+  resolved "https://registry.yarnpkg.com/@fortawesome/free-solid-svg-icons/-/free-solid-svg-icons-6.7.2.tgz#fe25883b5eb8464a82918599950d283c465b57f6"
+  integrity sha512-GsBrnOzU8uj0LECDfD5zomZJIjrPhIlWU82AHwa2s40FKH+kcxQaBvBo3Z4TxyZHIyX8XTDxsyA33/Vx9eFuQA==
+  dependencies:
+    "@fortawesome/fontawesome-common-types" "6.7.2"
 
 "@jridgewell/sourcemap-codec@^1.5.0":
   version "1.5.0"
@@ -651,6 +706,11 @@ argparse@~1.0.9:
   integrity sha512-o5Roy6tNG4SL/FOkCAN6RzjiakZS25RLYFrcMttJqbdd8BWrnA+fGz57iN5Pb06pvBGvl5gQ0B48dJlslXvoTg==
   dependencies:
     sprintf-js "~1.0.2"
+
+babylonjs-toolkits@^1.0.10:
+  version "1.0.10"
+  resolved "https://registry.yarnpkg.com/babylonjs-toolkits/-/babylonjs-toolkits-1.0.10.tgz#8d71477eb17f84bacaac0cbe4aa8bfbd2d81f957"
+  integrity sha512-znO5DGFmk8x5Davg7aH41twfxcXIpm3+gGiG1eMv+93HQgSw11K2X9ED/drMNTU1ruA66Up2aRBvBCfXaJ00PQ==
 
 balanced-match@^1.0.0:
   version "1.0.2"

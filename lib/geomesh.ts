@@ -1,7 +1,5 @@
 import * as BABYLON from '@babylonjs/core';
-
 import { MercatorCoordinate } from './mercator-coordinate';
-import { TAxis } from './types';
 
 export class GeoMesh {
 
@@ -9,7 +7,7 @@ export class GeoMesh {
      *
      */
     constructor(readonly mesh: BABYLON.AbstractMesh, private _position: [number, number, number]) {
-
+        
     }
 
     get scene() {

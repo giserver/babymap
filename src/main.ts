@@ -1,6 +1,7 @@
 import { createApp } from "vue";
 import App from "./App.vue";
 import "./style.css";
+import "mapbox-gl/dist/mapbox-gl.css";
 
 import mapboxgl from 'mapbox-gl';
 mapboxgl.accessToken = import.meta.env.VITE_BASE_MAP_MAPBOX_TOKEN;
