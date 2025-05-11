@@ -13,17 +13,24 @@ import mapboxgl from 'mapbox-gl';
 import maplibregl from 'maplibre-gl';
 import { onMounted } from 'vue';
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
     onMapboxLoaded(map: mapboxgl.Map): void;
     onMaplibreLoaded(map: maplibregl.Map): void;
-}>();
+    zoom?: number,
+    center?: [number, number],
+    pitch?: number,
+}>(), {
+    zoom: 18,
+    center: [120, 30] as any,
+    pitch: 60,
+});
 
 onMounted(() => {
     const boxMap = new mapboxgl.Map({
         container: "mapbox",
-        center: [120, 30],
-        zoom: 20,
-        pitch: 60,
+        center: props.center,
+        zoom: props.zoom,
+        pitch: props.pitch,
         projection: "mercator"
     });
 
@@ -34,12 +41,20 @@ onMounted(() => {
     const libreMap = new maplibregl.Map({
         container: "maplibre",
         style: 'https://demotiles.maplibre.org/style.json',
-        center: [120, 30],
-        zoom: 20,
-        pitch: 60
+        center: props.center,
+        zoom: props.zoom,
+        pitch:  props.pitch
     });
 
     libreMap.on('load', () => {
+        libreMap.addLayer({
+            id: "base-raster",
+            type: 'raster',
+            source:{
+                type: 'raster',
+                tiles:["https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"]
+            }
+        })
         props.onMaplibreLoaded(libreMap);
     });
 });

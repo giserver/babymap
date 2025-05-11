@@ -4,9 +4,9 @@ import { CameraSyncManager } from './camera-sync-manager';
 import { math } from './utils';
 
 export class BabyMap {
-    readonly declare bjsEngine: BABYLON.Engine;
-    readonly declare bjsScene: BABYLON.Scene;
-    readonly declare cameraSyncManager: CameraSyncManager
+    readonly bjsEngine: BABYLON.Engine;
+    readonly bjsScene: BABYLON.Scene;
+    readonly cameraSyncManager: CameraSyncManager
 
     /**
      *

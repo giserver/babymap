@@ -1,1 +1,1 @@
-export * from "./babylon-map-layer";
+export * from './babymap';
