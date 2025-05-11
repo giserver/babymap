@@ -71,11 +71,13 @@ export class CameraSyncManager {
         const farZ = Math.min(furthestDistance * 1.01, horizonDistance);
         const nz = (t.height / 50); //min near z as coded by @ansis
         const nearZ = Math.max(nz * pitchAngle, nz); //on changes in the pitch nz could be too low
+        
         const cameraProjectionMatrix = BABYLON.Matrix.PerspectiveFovRH(fovRad, t.width / t.height, nearZ, farZ);
         cameraProjectionMatrix.addAtIndex(8, -offset.x * 2 / t.width);
         cameraProjectionMatrix.addAtIndex(9, offset.y * 2 / t.height);
         this.camera.freezeProjectionMatrix(cameraProjectionMatrix);
 
+        //#region set babylonjs camera worldmatrix
         const halfFov = fovRad / 2;
         const cameraToCenterDistance = 0.5 / Math.tan(halfFov) * t.height;
         const cameraTranslateZ = BABYLON.Matrix.Translation(0, 0, cameraToCenterDistance);
@@ -89,10 +91,14 @@ export class CameraSyncManager {
         if (t.elevation) cameraWorldMatrix.addAtIndex(14, cameraZ * worldSize);
         const cameraRotationQuaternion = BABYLON.Quaternion.Zero();
         const cameraPosition = BABYLON.Vector3.Zero();
-        cameraWorldMatrix.decompose(undefined, cameraRotationQuaternion, cameraPosition);
+        const cameraScale = BABYLON.Vector3.Zero();
+        cameraWorldMatrix.decompose(cameraScale, cameraRotationQuaternion, cameraPosition);
         (this.camera as BABYLON.FreeCamera).rotationQuaternion = cameraRotationQuaternion;
         this.camera.position = cameraPosition;
+        //#endregion
 
+        
+        //#region set world node worldmatrix
         const point = t.point;
         const pointX = point.x;
         const pointY = point.y;
@@ -107,6 +113,7 @@ export class CameraSyncManager {
             .multiply(this.state.translateCenter)
             .multiply(scale)
             .multiply(translateMap));
+        //#endregion
     }
 
     private mercatorZfromAltitude(altitude: number, lat: number) {

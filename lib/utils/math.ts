@@ -3,6 +3,7 @@ import { constants } from './constants';
 
 export namespace math {
     export function prettyPrintMatrix(matrix: BABYLON.Matrix) {
+        console.log("--------- matrix ---------")
         const arr = matrix.asArray();
         for (let i = 0; i < 4; i++) {
             const quartet = [
@@ -13,6 +14,8 @@ export namespace math {
 
             console.log(quartet.map(function (num) { return num.toFixed(4) }))
         }
+
+        console.log("--------- ----- ---------")
     }
 
     export function radify(deg: number): number;

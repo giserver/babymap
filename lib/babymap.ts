@@ -26,10 +26,14 @@ export class BabyMap {
 
         this.cameraSyncManager = new CameraSyncManager(map, scene.activeCamera!);
 
-        const sunlight = new BABYLON.DirectionalLight("babymap-light", new BABYLON.Vector3(0, -1, 0), scene);
-        sunlight.position.set(0, 80000000, 100000000);
+        (scene.lights[0] as BABYLON.HemisphericLight).direction.y = -0.5;
+        const sunlight = new BABYLON.DirectionalLight("babymap-sun-light", new BABYLON.Vector3(0, 0.5, 0), scene);
+        sunlight.position.set(0, 80000000, -100000000);
         sunlight.autoUpdateExtends = true;
-        sunlight.parent = this.cameraSyncManager.world;
+
+        scene.lights.forEach(l => {
+            l.parent = this.cameraSyncManager.world;
+        });
 
         const that = this;
         map.addLayer({
@@ -52,9 +56,17 @@ export class BabyMap {
         const rootMesh = container.createRootMesh();
         rootMesh.position = math.projectToWorld(position);
         rootMesh.rotation.x = Math.PI / 2;
+        rootMesh.scaling.x = -1;
         // const s = math.projectedUnitsPerMeter(position[1]);
         // rootMesh.scaling.set(s,s,s);
         container.addAllToScene();
         rootMesh.parent = this.cameraSyncManager.world;
+
+        container.meshes.forEach(m => {
+            if (m.material) {
+                // m.material.backFaceCulling = false;
+                m.material.sideOrientation = 1;
+            }
+        });
     }
 }
