@@ -71,7 +71,7 @@ export class CameraSyncManager {
         const farZ = Math.min(furthestDistance * 1.01, horizonDistance);
         const nz = (t.height / 50); //min near z as coded by @ansis
         const nearZ = Math.max(nz * pitchAngle, nz); //on changes in the pitch nz could be too low
-        const cameraProjectionMatrix = math.makePerspectiveMatrix(fovRad, t.width / t.height, nearZ, farZ);
+        const cameraProjectionMatrix = BABYLON.Matrix.PerspectiveFovRH(fovRad, t.width / t.height, nearZ, farZ);
         cameraProjectionMatrix.addAtIndex(8, -offset.x * 2 / t.width);
         cameraProjectionMatrix.addAtIndex(9, offset.y * 2 / t.height);
         this.camera.freezeProjectionMatrix(cameraProjectionMatrix);

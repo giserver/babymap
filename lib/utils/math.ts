@@ -15,20 +15,6 @@ export namespace math {
         }
     }
 
-    export function makePerspectiveMatrix(fovy: number, aspect: number, near: number, far: number) {
-        const f = 1.0 / Math.tan(fovy / 2),
-            nf = 1 / (near - far);
-
-        const newMatrix = [
-            f / aspect, 0, 0, 0,
-            0, f, 0, 0,
-            0, 0, (far + near) * nf, -1,
-            0, 0, (2 * far * near) * nf, 0
-        ]
-
-        return BABYLON.Matrix.FromArray(newMatrix);
-    }
-
     export function radify(deg: number): number;
     export function radify(deg: Array<number>): Array<number>;
     export function radify(deg: { x: number, y: number, z: number }): { x: number, y: number, z: number };
