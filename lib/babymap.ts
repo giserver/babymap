@@ -1,7 +1,7 @@
 import * as BABYLON from '@babylonjs/core';
-import { CameraSyncManager } from './camera-sync-manager';
-import { math } from './utils/math';
 import { GLTFFileLoader } from '@babylonjs/loaders';
+import { CameraSyncManager } from './camera-sync-manager';
+import { math } from './utils';
 
 export class BabyMap {
     readonly declare bjsEngine: BABYLON.Engine;

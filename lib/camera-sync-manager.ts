@@ -1,6 +1,5 @@
 import * as BABYLON from '@babylonjs/core';
-import { constants } from './utils';
-import { math } from './utils/math';
+import { constants, math } from './utils';
 
 export class CameraSyncManager {
     readonly world: BABYLON.AbstractMesh;
