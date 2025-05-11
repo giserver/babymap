@@ -42,7 +42,7 @@ export class CameraSyncManager {
     }
 
     updateCamera() {
-        const map = this.map as mapboxgl.Map;
+        const map = this.map;
         const t = map.transform;
 
         const fovRad = math.radify(t.fov);
