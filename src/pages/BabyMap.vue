@@ -52,7 +52,7 @@ async function handleMaplibreLoaded(map: maplibregl.Map) {
             "circle-stroke-width": 1
         }
     })
-    
+
     const babymap = new BabyMap(map);
     await babymap.addGltfModal(url_model, [120, 30.001, 12]);
     await babymap.addGltfModal(url_soldier, [120, 30, 0]);

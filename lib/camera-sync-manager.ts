@@ -55,18 +55,18 @@ export class CameraSyncManager {
         const pixelsPerMeter = this.mercatorZfromAltitude(1, t.center.lat) * worldSize;
         const fovAboveCenter = fovRad * (0.5 + offset.y / t.height);
         const cameraToCenterDistance = 0.5 / Math.tan(halfFov) * t.height;
-        
+
         const cameraZ = t._camera?.position[2] ?? 0;
 
         // Adjust distance to MSL by the minimum possible elevation visible on screen,
         // this way the far plane is pushed further in the case of negative elevation.
-        const minElevationInPixels = t.elevation ? (typeof t.elevation === "number" ? t.elevation : t.elevation.getMinElevationBelowMSL()) * pixelsPerMeter : 0;
+        const minElevationInPixels = t.elevation ? (typeof t.elevation === "number" ? (t as any).minElevationForCurrentTile : t.elevation.getMinElevationBelowMSL()) * pixelsPerMeter : 0;
         const cameraToSeaLevelDistance = ((cameraZ * worldSize) - minElevationInPixels) / Math.cos(pitchRad);
         const topHalfSurfaceDistance = Math.sin(fovAboveCenter) * cameraToSeaLevelDistance / Math.sin(math.clamp(Math.PI - groundAngle - fovAboveCenter, 0.01, Math.PI - 0.01));
 
         // Calculate z distance of the farthest fragment that should be rendered.
-        const furthestDistance = cameraZ? pitchAngle * topHalfSurfaceDistance + cameraToSeaLevelDistance : 
-        pitchAngle *  Math.sin(halfFov) * cameraToCenterDistance / Math.sin(Math.PI - groundAngle - halfFov) + cameraToCenterDistance;
+        const furthestDistance = cameraZ ? pitchAngle * topHalfSurfaceDistance + cameraToSeaLevelDistance :
+            pitchAngle * Math.sin(halfFov) * cameraToCenterDistance / Math.sin(Math.PI - groundAngle - halfFov) + cameraToCenterDistance;
 
         // Add a bit extra to avoid precision problems when a fragment's distance is exactly `furthestDistance`
         const horizonDistance = (t as any)["_horizonShift"] ? cameraToSeaLevelDistance * (1 / (t as any)._horizonShift) : Number.MAX_VALUE;

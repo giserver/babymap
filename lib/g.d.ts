@@ -14,6 +14,7 @@ declare interface IMap {
         center: { lng: number, lat: number },
         centerOffset: { x: number, y: number },
         _camera?: { position: any },
+        _cameraPosition?:[number,number,number],
         elevation: number | Elevation | null | undefined
     }
 }
