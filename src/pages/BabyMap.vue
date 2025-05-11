@@ -4,12 +4,14 @@
 </template>
 
 <script setup lang="ts">
-import { BabyMap } from '../../lib/babymap';
-import Maps from '../components/Maps.vue';
-import url_model from '../assets/1.glb?url';
 import { onMounted } from 'vue';
 import mapboxgl from 'mapbox-gl';
 import "@babylonjs/inspector";
+
+import { BabyMap } from '../../lib/babymap';
+import Maps from '../components/Maps.vue';
+import url_model from '../assets/1.glb?url';
+import url_soldier from '../assets/soldier.glb?url';
 
 onMounted(()=>{
     const map = new mapboxgl.Map({
@@ -29,6 +31,9 @@ async function handleMapboxLoaded(map: mapboxgl.Map) {
     const babymap = new BabyMap(map);
 
     await babymap.addGltfModal(url_model, [120, 30, 12]);
+    await babymap.addGltfModal(url_soldier, [120, 30.001, 0]);
+
+    babymap.bjsScene.debugLayer.show();
 }
 
 function handleMaplibreLoaded(map: maplibregl.Map) {

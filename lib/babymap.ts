@@ -21,12 +21,12 @@ export class BabyMap {
         scene.beforeRender = () => {
             this.bjsEngine.wipeCaches(true);
         };
-        scene.createDefaultCameraOrLight();
+        scene.createDefaultCameraOrLight(false, false, true);
         this.bjsScene = scene;
 
         this.cameraSyncManager = new CameraSyncManager(map, scene.activeCamera!);
 
-        const sunlight = new BABYLON.DirectionalLight("123", new BABYLON.Vector3(0, -1, 0), scene);
+        const sunlight = new BABYLON.DirectionalLight("babymap-light", new BABYLON.Vector3(0, -1, 0), scene);
         sunlight.position.set(0, 80000000, 100000000);
         sunlight.autoUpdateExtends = true;
         sunlight.parent = this.cameraSyncManager.world;
@@ -52,6 +52,8 @@ export class BabyMap {
         const rootMesh = container.createRootMesh();
         rootMesh.position = math.projectToWorld(position);
         rootMesh.rotation.x = Math.PI / 2;
+        // const s = math.projectedUnitsPerMeter(position[1]);
+        // rootMesh.scaling.set(s,s,s);
         container.addAllToScene();
         rootMesh.parent = this.cameraSyncManager.world;
     }

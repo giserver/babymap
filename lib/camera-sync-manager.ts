@@ -6,12 +6,8 @@ export class CameraSyncManager {
     readonly world: BABYLON.AbstractMesh;
 
     private state = {
-        fov: 0.6435011087932844,
         translateCenter: BABYLON.Matrix.Translation(constants.WORLD_SIZE / 2, -constants.WORLD_SIZE / 2, 0),
-        worldSizeRatio: 512 / constants.WORLD_SIZE,
-        cameraToCenterDistance: 0,
-        cameraTranslateZ: new BABYLON.Matrix(),
-        topHalfSurfaceDistance: 0
+        worldSizeRatio: constants.TILE_SIZE / constants.WORLD_SIZE,
     };
 
     /**
@@ -33,53 +29,78 @@ export class CameraSyncManager {
     }
 
     setupCamera() {
-        const map = this.map as (maplibregl.Map | mapboxgl.Map);
-        const t = map.transform;
-        const halfFov = this.state.fov / 2;
-        const cameraToCenterDistance = 0.5 / Math.tan(halfFov) * t.height;
-        const groundAngle = Math.PI / 2 + math.radify(t.pitch);
+        // const map = this.map as (maplibregl.Map | mapboxgl.Map);
+        // const t = map.transform;
+        // const halfFov = t.fov / 2;
+        // const cameraToCenterDistance = 0.5 / Math.tan(halfFov) * t.height;
+        // const groundAngle = Math.PI / 2 + math.radify(t.pitch);
 
-        this.state.cameraToCenterDistance = cameraToCenterDistance;
-        this.state.cameraTranslateZ = BABYLON.Matrix.Translation(0, 0, cameraToCenterDistance);
-        this.state.topHalfSurfaceDistance = Math.sin(halfFov) * cameraToCenterDistance / Math.sin(Math.PI - groundAngle - halfFov);
+        // this.state.cameraToCenterDistance = cameraToCenterDistance;
+        // this.state.cameraTranslateZ = BABYLON.Matrix.Translation(0, 0, cameraToCenterDistance);
+        // this.state.topHalfSurfaceDistance = Math.sin(halfFov) * cameraToCenterDistance / Math.sin(Math.PI - groundAngle - halfFov);
 
         this.updateCamera();
     }
 
     updateCamera() {
-        const map = this.map as (maplibregl.Map | mapboxgl.Map);
+        const map = this.map as (mapboxgl.Map);
         const t = map.transform;
 
+        const fovRad = math.radify(t.fov);
+        const pitchRad = math.radify(t.pitch);
+        const pitchAngle = Math.cos((Math.PI / 2) - pitchRad); //pitch seems to influence heavily the depth calculation and cannot be more than 60 = PI/3 < v1 and 85 > v2
+        const groundAngle = Math.PI / 2 + pitchRad;
+
+        const offset = t.centerOffset;
+        const worldSize = t.tileSize * t.scale;
+        const pixelsPerMeter = this.mercatorZfromAltitude(1, t.center.lat) * worldSize;
+        const fovAboveCenter = fovRad * (0.5 + offset.y / t.height);
+
+        const cameraZ = t._camera.position[2];
+
+        // Adjust distance to MSL by the minimum possible elevation visible on screen,
+        // this way the far plane is pushed further in the case of negative elevation.
+        const minElevationInPixels = t.elevation ? (typeof t.elevation === "number" ? t.elevation : t.elevation.getMinElevationBelowMSL()) * pixelsPerMeter : 0;
+        const cameraToSeaLevelDistance = ((cameraZ * worldSize) - minElevationInPixels) / Math.cos(pitchRad);
+        const topHalfSurfaceDistance = Math.sin(fovAboveCenter) * cameraToSeaLevelDistance / Math.sin(math.clamp(Math.PI - groundAngle - fovAboveCenter, 0.01, Math.PI - 0.01));
+
         // Calculate z distance of the farthest fragment that should be rendered.
-        const furthestDistance = Math.cos(Math.PI / 2 - math.radify(t.pitch)) * this.state.topHalfSurfaceDistance + this.state.cameraToCenterDistance;
+        const furthestDistance = pitchAngle * topHalfSurfaceDistance + cameraToSeaLevelDistance;
 
         // Add a bit extra to avoid precision problems when a fragment's distance is exactly `furthestDistance`
-        const farZ = furthestDistance * 1.01;
-    
-        this.camera.freezeProjectionMatrix(math.makePerspectiveMatrix(this.state.fov, t.width / t.height, 1, farZ));
+        const horizonDistance = (t as any)["_horizonShift"] ? cameraToSeaLevelDistance * (1 / (t as any)._horizonShift) : Number.MAX_VALUE;
+        const farZ = Math.min(furthestDistance * 1.01, horizonDistance);
+        const nz = (t.height / 50); //min near z as coded by @ansis
+        const nearZ = Math.max(nz * pitchAngle, nz); //on changes in the pitch nz could be too low
+        const cameraProjectionMatrix = math.makePerspectiveMatrix(fovRad, t.width / t.height, nearZ, farZ);
+        cameraProjectionMatrix.addAtIndex(8, -offset.x * 2 / t.width);
+        cameraProjectionMatrix.addAtIndex(9, offset.y * 2 / t.height);
+        this.camera.freezeProjectionMatrix(cameraProjectionMatrix);
 
-        const rotatePitch = BABYLON.Matrix.RotationX(math.radify(t.pitch));
+        const halfFov = fovRad / 2;
+        const cameraToCenterDistance = 0.5 / Math.tan(halfFov) * t.height;
+        const cameraTranslateZ = BABYLON.Matrix.Translation(0, 0, cameraToCenterDistance);
+        const rotatePitch = BABYLON.Matrix.RotationX(pitchRad);
         const rotateBearing = BABYLON.Matrix.RotationZ(-math.radify(t.bearing));
 
         const cameraWorldMatrix = BABYLON.Matrix.Identity()
-            .multiply(this.state.cameraTranslateZ)
+            .multiply(cameraTranslateZ)
             .multiply(rotatePitch)
             .multiply(rotateBearing);
-
+        if (t.elevation) cameraWorldMatrix.addAtIndex(14, cameraZ * worldSize);
         const cameraRotationQuaternion = BABYLON.Quaternion.Zero();
         const cameraPosition = BABYLON.Vector3.Zero();
         cameraWorldMatrix.decompose(undefined, cameraRotationQuaternion, cameraPosition);
-
         (this.camera as BABYLON.FreeCamera).rotationQuaternion = cameraRotationQuaternion;
         this.camera.position = cameraPosition;
 
+        const point = t.point;
+        const pointX = point.x;
+        const pointY = point.y;
         const zoomPow = t.scale * this.state.worldSizeRatio;
         // Handle scaling and translation of objects in the map in the world's matrix transform, not the camera
         const scale = BABYLON.Matrix.Scaling(zoomPow, zoomPow, zoomPow);
-        const p = (t as any).point ?? (t as any)._cameraPosition;
-        const x = p instanceof Array ? p[0] : p.x;
-        const y = p instanceof Array ? p[1] : p.y;
-        const translateMap = BABYLON.Matrix.Translation(-x, y, 0);
+        const translateMap = BABYLON.Matrix.Translation(-pointX, pointY, 0);
         const rotateMap = BABYLON.Matrix.RotationZ(Math.PI);
 
         this.world!.freezeWorldMatrix(BABYLON.Matrix.Identity()
@@ -87,5 +108,13 @@ export class CameraSyncManager {
             .multiply(this.state.translateCenter)
             .multiply(scale)
             .multiply(translateMap));
+    }
+
+    private mercatorZfromAltitude(altitude: number, lat: number) {
+        return altitude / this.circumferenceAtLatitude(lat);
+    }
+
+    private circumferenceAtLatitude(latitude: number) {
+        return constants.EARTH_CIRCUMFERENCE * Math.cos(math.radify(latitude));
     }
 }
