@@ -2,8 +2,10 @@ import * as BABYLON from '@babylonjs/core';
 import { GLTFFileLoader } from '@babylonjs/loaders';
 import { CameraSyncManager } from './camera-sync-manager';
 import { math } from './utils';
+import { TMap, TPosition } from './types';
 
 export class BabyMap {
+    readonly customLayerId = "babymap-layer";
     readonly bjsEngine: BABYLON.Engine;
     readonly bjsScene: BABYLON.Scene;
     readonly cameraSyncManager: CameraSyncManager
@@ -11,7 +13,7 @@ export class BabyMap {
     /**
      *
      */
-    constructor(private map: IMap) {
+    constructor(private map: TMap) {
         BABYLON.RegisterSceneLoaderPlugin(new GLTFFileLoader());
 
         this.bjsEngine = new BABYLON.Engine(map.getCanvas(), true, { useHighPrecisionMatrix: true }, true);
@@ -37,11 +39,11 @@ export class BabyMap {
 
         const that = this;
         map.addLayer({
-            id: "babymap-layer",
+            id: this.customLayerId,
             type: 'custom',
             renderingMode: '3d',
 
-            onAdd(map: IMap, gl: any) {
+            onAdd(map: TMap, gl: any) {
 
             },
             render() {
@@ -51,8 +53,12 @@ export class BabyMap {
         });
     }
 
-    async addGltfModal(url: string, position: [number, number, number]) {
+    async addGltfModal(url: string, position: TPosition) {
         const container = await BABYLON.LoadAssetContainerAsync(url, this.bjsScene);
+        this.addAssetContainer(container, position);
+    }
+
+    private addAssetContainer(container: BABYLON.AssetContainer, position: TPosition) {
         const rootMesh = container.createRootMesh();
         rootMesh.position = math.projectToWorld(position);
         rootMesh.rotation.x = Math.PI / 2;
@@ -64,7 +70,6 @@ export class BabyMap {
 
         container.meshes.forEach(m => {
             if (m.material) {
-                // m.material.backFaceCulling = false;
                 m.material.sideOrientation = 1;
             }
         });

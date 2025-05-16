@@ -1,5 +1,6 @@
 import * as BABYLON from '@babylonjs/core';
 import { constants, math } from './utils';
+import {TMap} from './types'
 
 export class CameraSyncManager {
     readonly world: BABYLON.AbstractMesh;
@@ -12,7 +13,7 @@ export class CameraSyncManager {
     /**
      *
      */
-    constructor(private map: IMap, private camera: BABYLON.Camera, world?: BABYLON.AbstractMesh) {
+    constructor(private map: TMap, private camera: BABYLON.Camera, world?: BABYLON.AbstractMesh) {
         this.world = world ?? new BABYLON.Mesh("babylon-map-world", camera.getScene());
         this.world.position.x = this.world.position.y = constants.WORLD_SIZE / 2;
 
