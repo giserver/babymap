@@ -13,8 +13,9 @@ declare interface IMap {
         tileSize: number,
         center: { lng: number, lat: number },
         centerOffset: { x: number, y: number },
+        worldSize: number,
         _camera?: { position: any },
-        _cameraPosition?:[number,number,number],
+        _cameraPosition?: [number, number, number],
         elevation: number | Elevation | null | undefined
     }
 }

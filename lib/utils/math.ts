@@ -1,6 +1,7 @@
 import * as BABYLON from '@babylonjs/core';
 import { constants } from './constants';
 
+const MAX_VALID_LATITUDE = 85.051129;
 export namespace math {
     export function prettyPrintMatrix(matrix: BABYLON.Matrix) {
         console.log("--------- matrix ---------")
@@ -83,5 +84,18 @@ export namespace math {
 
     export function clamp(n: number, min: number, max: number) {
         return Math.min(max, Math.max(min, n));
+    }
+
+    export function mercatorXfromLng(lng: number) {
+        return (180 + lng) / 360;
+    }
+
+    export function mercatorYfromLat(lat: number) {
+        return (180 - (180 / Math.PI * Math.log(Math.tan(Math.PI / 4 + lat * Math.PI / 360)))) / 360;
+    }
+
+    export function projectToWorldCoordinates(worldSize: number, lnglat: { lng: number, lat: number }): { x: number, y: number } {
+        const lat = clamp(lnglat.lat, -MAX_VALID_LATITUDE, MAX_VALID_LATITUDE);
+        return { x: mercatorXfromLng(lnglat.lng) * worldSize, y: mercatorYfromLat(lat) * worldSize };
     }
 }

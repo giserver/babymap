@@ -99,9 +99,9 @@ export class CameraSyncManager {
 
 
         //#region set world node worldmatrix
-        const point = (t as any).point ?? (t as any)._cameraPosition;
-        const pointX = point instanceof Array ? point[0] : point.x;
-        const pointY = point instanceof Array ? point[1] : point.y;
+        const point = (t as any).point ?? math.projectToWorldCoordinates(t.worldSize, t.center); // adapt to maplibre v5
+        const pointX = point.x;
+        const pointY = point.y;
         const zoomPow = t.scale * this.state.worldSizeRatio;
         // Handle scaling and translation of objects in the map in the world's matrix transform, not the camera
         const scale = BABYLON.Matrix.Scaling(zoomPow, zoomPow, zoomPow);
