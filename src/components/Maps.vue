@@ -43,7 +43,8 @@ onMounted(() => {
         style: 'https://demotiles.maplibre.org/style.json',
         center: props.center,
         zoom: props.zoom,
-        pitch:  props.pitch
+        pitch:  props.pitch,
+        maxPitch: 85
     });
 
     libreMap.on('load', () => {
