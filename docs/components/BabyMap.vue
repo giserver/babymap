@@ -1,14 +1,17 @@
 <template>
-    <Maps @mapbox-loaded="handleMapboxLoaded" @maplibre-loaded="handleMaplibreLoaded"></Maps>
+    <Maps style="width: 100%;height: 400px !important;" @mapbox-loaded="handleMapboxLoaded"
+        @maplibre-loaded="handleMaplibreLoaded" :zoom="17" :center="[120, 30]" :pitch="60"></Maps>
 </template>
 
 <script setup lang="ts">
 import "@babylonjs/inspector";
 
 import { BabyMap } from '../../lib/babymap';
-import Maps from '../components/Maps.vue';
-import url_model from '../assets/1.glb?url';
-import url_soldier from '../assets/soldier.glb?url';
+import Maps from './base/Maps.vue';
+//@ts-ignore
+import url_model from "/monkey.glb?url";
+//@ts-ignore
+import url_soldier from '/soldier.glb?url';
 
 async function handleMapboxLoaded(map: mapboxgl.Map) {
     map.addLayer({
