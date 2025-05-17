@@ -90,14 +90,14 @@ function maplibreLoaded(map: maplibregl.Map) {
         id: "line",
         points,
         lineMeshBuilderOptions: {
-            updatable: true,
+            updatable: true
         },
         lineMaterialBuilderOptions: {
             color: BABYLON.Color3.FromHexString('#00D8E6'),
             colorMode: BABYLON.GreasedLineMeshColorMode.COLOR_MODE_MULTIPLY,
             useDash: true,
-            dashRatio: 0.8,
-            dashCount: 1,
+            dashRatio: 0.6,
+            dashCount: 5,
         }
     });
 
