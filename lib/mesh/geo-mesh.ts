@@ -46,15 +46,17 @@ export class GeoMesh {
             rootMesh.scaling.set(-s, s, s);
         }
 
+        rootMesh.parent = world;
+
         // 不知道为什么，贴图贴反了
         container.materials.forEach(m => {
             m.sideOrientation = 1;
         });
 
+        // 停止动画
         container.animationGroups.forEach(g => g.stop());
 
         container.addAllToScene();
-        rootMesh.parent = world;
         return new GeoMesh(id, rootMesh, container.meshes, container.animationGroups);
     }
 

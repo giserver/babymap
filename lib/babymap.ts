@@ -75,22 +75,26 @@ export class BabyMap {
     async addModel(options: TAnyModelOptions) {
         if (this.geoMeshes.has(options.id)) throw Error(`id: ${options.id} already existed`);
 
+        let geoMesh: GeoMesh;
+
         if (options.type === 'gltf') {
             const container = await BABYLON.LoadAssetContainerAsync(options.url, this.bjsScene);
 
-            return GeoMesh.fromAssetContainer({
+            geoMesh = GeoMesh.fromAssetContainer({
                 ...options,
                 container,
                 world: this.cameraSyncManager.world
             });
         }
 
-        if (options.type === 'mesh') {
-            return GeoMesh.fromAbstractMesh({
+        else if (options.type === 'mesh') {
+            geoMesh = GeoMesh.fromAbstractMesh({
                 ...options,
                 world: this.cameraSyncManager.world
             });
         }
+
+        this.geoMeshes.set(options.id, geoMesh!);
     }
 
     removeModel(id: string) {
