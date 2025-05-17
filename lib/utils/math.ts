@@ -42,7 +42,8 @@ export namespace math {
         return Math.abs(constants.WORLD_SIZE / Math.cos(constants.DEG2RAD * latitude) / constants.EARTH_CIRCUMFERENCE);
     }
 
-    export function projectToWorld(coords: number[]) {
+    export function projectToWorld(position: TPosition) {
+        const coords = positionArray(position);
 
         // Spherical mercator forward projection, re-scaling to WORLD_SIZE
 

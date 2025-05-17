@@ -1,7 +1,7 @@
 <template>
     <div class="maps-container">
-        <Mapbox style="width: 50vw;" @load="onMapboxLoaded" :zoom="zoom" :center="center" :pitch="pitch"></Mapbox>
-        <Maplibre style="width: 50vw;" @load="onMaplibreLoaded" :zoom="zoom" :center="center" :pitch="pitch"></Maplibre>
+        <Mapbox style="width: 50vw;" @load="onMapboxLoaded" :bearing="bearing" :zoom="zoom" :center="center" :pitch="pitch"></Mapbox>
+        <Maplibre style="width: 50vw;" @load="onMaplibreLoaded" :bearing="bearing" :zoom="zoom" :center="center" :pitch="pitch"></Maplibre>
     </div>
 </template>
 
@@ -9,12 +9,17 @@
 import Mapbox from './Mapbox.vue';
 import Maplibre from './Maplibre.vue';
 import maplibregl from 'maplibre-gl';
-import {TMapOptions} from '../../types';
+import { TMapOptions } from '../../types';
 
-defineProps<{
+withDefaults(defineProps<{
     onMapboxLoaded(map: mapboxgl.Map): void;
     onMaplibreLoaded(map: maplibregl.Map): void;
-} & TMapOptions>();
+} & TMapOptions>(), {
+    zoom: 18,
+    center: ([120, 30] as any),
+    pitch: 60,
+    bearing: 0
+});
 
 </script>
 

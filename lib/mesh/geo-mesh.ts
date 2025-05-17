@@ -2,17 +2,21 @@ import * as BABYLON from '@babylonjs/core';
 import { TMeshUnits, TPosition } from '../types';
 import { math } from '../utils';
 
-export type TGeoMeshCreateOptions = {
+type TGeoMeshFromAssetContainerOptions = {
     id: string,
     world: BABYLON.AbstractMesh,
+    container: BABYLON.AssetContainer,
     position: TPosition,
     scale?: number,
     units?: TMeshUnits
-}
-
-export type TGeoMeshFromAssetContainerOptions = TGeoMeshCreateOptions & {
-    container: BABYLON.AssetContainer
 };
+
+type TGeoMeshFromAbstractMeshOptions = {
+    id: string,
+    world: BABYLON.AbstractMesh,
+    mesh: BABYLON.AbstractMesh,
+    position: TPosition,
+}
 
 export class GeoMesh {
 
@@ -47,11 +51,19 @@ export class GeoMesh {
             m.sideOrientation = 1;
         });
 
-        container.animationGroups.forEach(g=>g.stop());
+        container.animationGroups.forEach(g => g.stop());
 
         container.addAllToScene();
         rootMesh.parent = world;
         return new GeoMesh(id, rootMesh, container.meshes, container.animationGroups);
+    }
+
+    static fromAbstractMesh(options: TGeoMeshFromAbstractMeshOptions) {
+        options.mesh.position = math.projectToWorld(options.position);
+        options.mesh.parent = options.world;
+        options.mesh.name = options.id;
+
+        return new GeoMesh(options.id, options.mesh, [options.mesh], []);
     }
 
     remove() {
@@ -59,6 +71,6 @@ export class GeoMesh {
     }
 
     setPosition(position: TPosition) {
-        this.rootMesh.position = math.projectToWorld(math.positionArray(position));
+        this.rootMesh.position = math.projectToWorld(position);
     }
 }

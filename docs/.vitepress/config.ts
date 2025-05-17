@@ -1,4 +1,5 @@
 import { readFileSync, writeFileSync } from 'fs';
+import { text } from 'stream/consumers';
 import { UserConfig, DefaultTheme, Plugin } from 'vitepress';
 
 function serialize(obj, name) {
@@ -75,23 +76,10 @@ export default {
                 base: "/pages/features/",
                 items: [
                     {
-                        text: "视图转盘",
-                        link: "roulette-viewer"
-                    },
-                    {
-                        text: "切割",
+                        text: "线",
                         items: [
-                            { text: "盒子切割", link: 'clipper/box' }
+                            { text: "基本", link: "line"}
                         ]
-                    }, {
-                        text: "测量",
-                        items: [
-                            { text: "点", link: 'measure/point' },
-                            { text: "长度", link: 'measure/length' }
-                        ]
-                    }, {
-                        text: "捕捉",
-                        link: "snap"
                     }
                 ]
             }

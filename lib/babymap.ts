@@ -4,19 +4,23 @@ import { CameraSyncManager } from './camera';
 import { TMap, TMeshUnits, TPosition } from './types';
 import { GeoMesh } from './mesh';
 
-export type TModelGeometryOptions = {
-    position: TPosition,
-    scale?: number,
-    units?: TMeshUnits
-}
-
 export type TGltfModelOptions = {
     type: "gltf",
     id: string,
     url: string,
-} & TModelGeometryOptions;
+    position: TPosition,
+    scale?: number,
+    units?: TMeshUnits
+};
 
-export type TAnyModelOptions = TGltfModelOptions
+export type TLineModelOptions = {
+    type: "mesh",
+    id: string,
+    mesh: BABYLON.AbstractMesh,
+    position: TPosition
+}
+
+export type TAnyModelOptions = TGltfModelOptions | TLineModelOptions
 
 export class BabyMap {
     readonly customLayerId = "babymap-layer";
@@ -69,8 +73,8 @@ export class BabyMap {
     }
 
     async addModel(options: TAnyModelOptions) {
-        if(this.geoMeshes.has(options.id)) throw Error(`id: ${options.id} already existed`);
-        
+        if (this.geoMeshes.has(options.id)) throw Error(`id: ${options.id} already existed`);
+
         if (options.type === 'gltf') {
             const container = await BABYLON.LoadAssetContainerAsync(options.url, this.bjsScene);
 
@@ -80,11 +84,18 @@ export class BabyMap {
                 world: this.cameraSyncManager.world
             });
         }
+
+        if (options.type === 'mesh') {
+            return GeoMesh.fromAbstractMesh({
+                ...options,
+                world: this.cameraSyncManager.world
+            });
+        }
     }
 
-    removeModel(id: string){
+    removeModel(id: string) {
         const geoMesh = this.geoMeshes.get(id);
-        if(geoMesh){
+        if (geoMesh) {
             geoMesh.remove();
             this.geoMeshes.delete(id);
         }
