@@ -1,8 +1,22 @@
 import * as BABYLON from '@babylonjs/core';
 import { GLTFFileLoader } from '@babylonjs/loaders';
-import { CameraSyncManager } from './camera-sync-manager';
-import { math } from './utils';
-import { TMap, TPosition } from './types';
+import { CameraSyncManager } from './camera';
+import { TMap, TMeshUnits, TPosition } from './types';
+import { GeoMesh } from './mesh';
+
+export type TModelGeometryOptions = {
+    position: TPosition,
+    scale?: number,
+    units?: TMeshUnits
+}
+
+export type TGltfModelOptions = {
+    type: "gltf",
+    id: string,
+    url: string,
+} & TModelGeometryOptions;
+
+export type TAnyModelOptions = TGltfModelOptions
 
 export class BabyMap {
     readonly customLayerId = "babymap-layer";
@@ -53,25 +67,15 @@ export class BabyMap {
         });
     }
 
-    async addGltfModal(url: string, position: TPosition) {
-        const container = await BABYLON.LoadAssetContainerAsync(url, this.bjsScene);
-        this.addAssetContainer(container, position);
-    }
+    async addModel(options: TAnyModelOptions) {
+        if (options.type === 'gltf') {
+            const container = await BABYLON.LoadAssetContainerAsync(options.url, this.bjsScene);
 
-    private addAssetContainer(container: BABYLON.AssetContainer, position: TPosition) {
-        const rootMesh = container.createRootMesh();
-        rootMesh.position = math.projectToWorld(position);
-        rootMesh.rotation.x = Math.PI / 2;
-        rootMesh.scaling.x = -1;
-        // const s = math.projectedUnitsPerMeter(position[1]);
-        // rootMesh.scaling.set(s,s,s);
-        container.addAllToScene();
-        rootMesh.parent = this.cameraSyncManager.world;
-
-        container.meshes.forEach(m => {
-            if (m.material) {
-                m.material.sideOrientation = 1;
-            }
-        });
+            return GeoMesh.fromAssetContainer({
+                ...options,
+                container,
+                world: this.cameraSyncManager.world
+            })
+        }
     }
 }

@@ -6,7 +6,7 @@
 import maplibregl from 'maplibre-gl';
 import "maplibre-gl/dist/maplibre-gl.css";
 import { onMounted } from 'vue';
-import {TMapOptions} from '../../types';
+import { TMapOptions } from '../../types';
 
 type TOptions = TMapOptions & {
     onLoad(map: maplibregl.Map): void
@@ -26,8 +26,9 @@ onMounted(() => {
             type: 'raster',
             source: {
                 type: 'raster',
+                maxzoom: 18,
                 tiles: ["https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"]
-            }
+            },
         })
 
         props.onLoad(map);
@@ -41,7 +42,7 @@ onMounted(() => {
     width: 100vh;
 }
 
-:deep(.maplibregl-ctrl-attrib-button){
-    margin:0;
+:deep(.maplibregl-ctrl-attrib-button) {
+    margin: 0;
 }
 </style>

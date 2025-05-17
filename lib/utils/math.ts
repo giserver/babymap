@@ -1,5 +1,6 @@
 import * as BABYLON from '@babylonjs/core';
 import { constants } from './constants';
+import { TPosition } from '../types';
 
 const MAX_VALID_LATITUDE = 85.051129;
 export namespace math {
@@ -97,5 +98,15 @@ export namespace math {
     export function projectToWorldCoordinates(worldSize: number, lnglat: { lng: number, lat: number }): { x: number, y: number } {
         const lat = clamp(lnglat.lat, -MAX_VALID_LATITUDE, MAX_VALID_LATITUDE);
         return { x: mercatorXfromLng(lnglat.lng) * worldSize, y: mercatorYfromLat(lat) * worldSize };
+    }
+
+    export function positionArray(position: TPosition): [number, number, number] {
+        if (position instanceof Array) {
+            if (position.length === 2)
+                position.push(0);
+
+            return position as [number, number, number];
+        };
+        return [position.lng, position.lat, position.alt ?? 0];
     }
 }

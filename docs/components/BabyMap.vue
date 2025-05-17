@@ -1,5 +1,6 @@
 <template>
-    <Maps @mapbox-loaded="handleMapboxLoaded" @maplibre-loaded="handleMaplibreLoaded" :zoom="17.5" :center="center"
+    <Maps @mapbox-loaded="handleMapboxLoaded" 
+    @maplibre-loaded="handleMaplibreLoaded" :zoom="18" :center="center"
         :pitch="60"></Maps>
 </template>
 
@@ -32,7 +33,13 @@ async function handleMapboxLoaded(map: mapboxgl.Map) {
     })
 
     const babymap = new BabyMap(map);
-    await babymap.addGltfModal(url_soldier, [...center, 0]);
+    await babymap.addModel({
+        type: 'gltf',
+        id: "",
+        url: url_soldier,
+        position: [...center, 0],
+        scale: 10
+    });
 }
 
 async function handleMaplibreLoaded(map: maplibregl.Map) {
@@ -49,7 +56,13 @@ async function handleMaplibreLoaded(map: maplibregl.Map) {
     })
 
     const babymap = new BabyMap(map);
-    await babymap.addGltfModal(url_soldier, [...center, 0]);
+    await babymap.addModel({
+        type: 'gltf',
+        id: "",
+        url: url_soldier,
+        position: [...center, 0],
+        scale: 10
+    });
 }
 
 </script>
