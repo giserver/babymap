@@ -78,7 +78,8 @@ export default {
                     {
                         text: "线",
                         items: [
-                            { text: "基本", link: "line"}
+                            { text: "基本", link: "line"},
+                            { text: "流光", link: "line/flow"}
                         ]
                     }
                 ]

@@ -3,8 +3,8 @@ import { TPosition } from "../types";
 import { math } from "../utils";
 
 export namespace GeoMeshBuilder {
-    type TResult = {
-        mesh: BABYLON.AbstractMesh;
+    type TResult<TMesh extends BABYLON.AbstractMesh = BABYLON.AbstractMesh> = {
+        mesh: TMesh;
         position: TPosition;
     }
 
@@ -13,7 +13,7 @@ export namespace GeoMeshBuilder {
         points: TPosition[],
         lineMeshBuilderOptions?: Omit<BABYLON.GreasedLineMeshBuilderOptions, "points">,
         lineMaterialBuilderOptions?: BABYLON.GreasedLineMaterialBuilderOptions
-    }): TResult {
+    }): TResult<BABYLON.GreasedLineBaseMesh | BABYLON.GreasedLineMesh | BABYLON.GreasedLineRibbonMesh> {
         const projectPoints = options.points.map(p => {
             return math.projectToWorld(p);
         });
@@ -24,10 +24,10 @@ export namespace GeoMeshBuilder {
         }, new Array<BABYLON.Vector3>);
 
         const lineMeshBuilderOptions = options.lineMeshBuilderOptions ?? {};
-        lineMeshBuilderOptions.widths ??= new Array<number>(lPoints.length * 2).fill(50);
 
         const lineMaterialBuilderOptions = options.lineMaterialBuilderOptions ?? {};
         lineMaterialBuilderOptions.color ??= BABYLON.Color3.Red();
+        lineMaterialBuilderOptions.width ??= 5;
 
         const mesh = BABYLON.CreateGreasedLine(options.id, {
             points: lPoints,
