@@ -12,7 +12,8 @@ export namespace GeoMeshBuilder {
         id: string,
         points: TPosition[],
         lineMeshBuilderOptions?: Omit<BABYLON.GreasedLineMeshBuilderOptions, "points">,
-        lineMaterialBuilderOptions?: BABYLON.GreasedLineMaterialBuilderOptions
+        lineMaterialBuilderOptions?: BABYLON.GreasedLineMaterialBuilderOptions,
+        scene?: BABYLON.Scene
     }): TResult<BABYLON.GreasedLineBaseMesh | BABYLON.GreasedLineMesh | BABYLON.GreasedLineRibbonMesh> {
         const projectPoints = options.points.map(p => {
             return math.projectToWorld(p);
@@ -24,15 +25,13 @@ export namespace GeoMeshBuilder {
         }, new Array<BABYLON.Vector3>);
 
         const lineMeshBuilderOptions = options.lineMeshBuilderOptions ?? {};
-
         const lineMaterialBuilderOptions = options.lineMaterialBuilderOptions ?? {};
-        lineMaterialBuilderOptions.color ??= BABYLON.Color3.Red();
-        lineMaterialBuilderOptions.width ??= 5;
+         lineMaterialBuilderOptions.width ??= 5;
 
         const mesh = BABYLON.CreateGreasedLine(options.id, {
             points: lPoints,
             ...lineMeshBuilderOptions
-        }, lineMaterialBuilderOptions);
+        }, lineMaterialBuilderOptions, options.scene);
 
         return {
             mesh,

@@ -6,6 +6,7 @@
 <script setup lang="ts">
 import maplibregl from 'maplibre-gl';
 import mapboxgl from 'mapbox-gl';
+import * as BABYLON from '@babylonjs/core';
 import { BabyMap, GeoMeshBuilder } from '../../../../lib';
 import Maps from '../../base/Maps.vue';
 
@@ -19,7 +20,10 @@ function mapboxLoaded(map: mapboxgl.Map) {
     const babymap = new BabyMap(map);
     const line = GeoMeshBuilder.createGreasedLine({
         id: "line",
-        points
+        points,
+        lineMaterialBuilderOptions:{
+            color: BABYLON.Color3.Red()
+        }
     });
     babymap.addModel({
         id: "line",
@@ -36,7 +40,10 @@ function maplibreLoaded(map: maplibregl.Map) {
     const babymap = new BabyMap(map);
     const line = GeoMeshBuilder.createGreasedLine({
         id: "line",
-        points
+        points,
+        lineMaterialBuilderOptions:{
+            color: BABYLON.Color3.Red()
+        }
     });
     babymap.addModel({
         id: "line",

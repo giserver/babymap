@@ -90,14 +90,14 @@ function maplibreLoaded(map: maplibregl.Map) {
         id: "line",
         points,
         lineMeshBuilderOptions: {
-            updatable: true
+            updatable: true,
         },
         lineMaterialBuilderOptions: {
             color: BABYLON.Color3.FromHexString('#00D8E6'),
             colorMode: BABYLON.GreasedLineMeshColorMode.COLOR_MODE_MULTIPLY,
             useDash: true,
             dashRatio: 0.8,
-            dashCount: 1
+            dashCount: 1,
         }
     });
 
@@ -105,7 +105,7 @@ function maplibreLoaded(map: maplibregl.Map) {
 
     babymap.bjsScene.onBeforeRenderObservable.add(() => {
         const animRatio = babymap.bjsScene.getAnimationRatio();
-        line.mesh.greasedLineMaterial!.dashOffset += 0.1 * animRatio;
+        line.mesh.greasedLineMaterial!.dashOffset -= 0.1 * animRatio;
     })
     babymap.addModel({
         id: "line",
