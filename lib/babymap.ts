@@ -22,7 +22,8 @@ export class BabyMap {
     readonly customLayerId = "babymap-layer";
     readonly bjsEngine: BABYLON.Engine;
     readonly bjsScene: BABYLON.Scene;
-    readonly cameraSyncManager: CameraSyncManager
+    readonly cameraSyncManager: CameraSyncManager;
+    private geoMeshes = new Map<string, GeoMesh>();
 
     /**
      *
@@ -68,6 +69,8 @@ export class BabyMap {
     }
 
     async addModel(options: TAnyModelOptions) {
+        if(this.geoMeshes.has(options.id)) throw Error(`id: ${options.id} already existed`);
+        
         if (options.type === 'gltf') {
             const container = await BABYLON.LoadAssetContainerAsync(options.url, this.bjsScene);
 
@@ -75,7 +78,15 @@ export class BabyMap {
                 ...options,
                 container,
                 world: this.cameraSyncManager.world
-            })
+            });
+        }
+    }
+
+    removeModel(id: string){
+        const geoMesh = this.geoMeshes.get(id);
+        if(geoMesh){
+            geoMesh.remove();
+            this.geoMeshes.delete(id);
         }
     }
 }
