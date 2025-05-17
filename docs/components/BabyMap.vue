@@ -1,6 +1,6 @@
 <template>
     <Maps @mapbox-loaded="handleMapboxLoaded" 
-    @maplibre-loaded="handleMaplibreLoaded" :zoom="18" :center="center"
+    @maplibre-loaded="handleMaplibreLoaded" :zoom="12" :center="center"
         :pitch="60"></Maps>
 </template>
 
@@ -38,7 +38,7 @@ async function handleMapboxLoaded(map: mapboxgl.Map) {
         id: "",
         url: url_soldier,
         position: [...center, 0],
-        scale: 10
+        scale: 1000
     });
 }
 
@@ -61,7 +61,7 @@ async function handleMaplibreLoaded(map: maplibregl.Map) {
         id: "",
         url: url_soldier,
         position: [...center, 0],
-        scale: 10
+        scale: 1000
     });
 }
 

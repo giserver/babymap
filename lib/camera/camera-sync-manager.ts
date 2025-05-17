@@ -117,7 +117,7 @@ export class CameraSyncManager {
             .multiply(cameraTranslateZ)
             .multiply(rotatePitch)
             .multiply(rotateBearing);
-        if (t.elevation && cameraZ) cameraWorldMatrix.addAtIndex(14, cameraZ * worldSize);
+        // if (t.elevation && cameraZ) cameraWorldMatrix.addAtIndex(14, cameraZ * worldSize);
         const cameraRotationQuaternion = BABYLON.Quaternion.Zero();
         const cameraPosition = BABYLON.Vector3.Zero();
         const cameraScale = BABYLON.Vector3.Zero();
@@ -143,6 +143,12 @@ export class CameraSyncManager {
             .multiply(scale)
             .multiply(translateMap));
         //#endregion
+
+        // if(import.meta.env.DEV){
+        //     console.log(this.camera.getWorldMatrix().asArray());
+        //     console.log(this.camera.getProjectionMatrix().asArray());
+        //     console.log(this.world!.getWorldMatrix().asArray());
+        // }
     }
 
     private mercatorZfromAltitude(altitude: number, lat: number) {
