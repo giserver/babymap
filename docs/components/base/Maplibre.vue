@@ -4,7 +4,6 @@
 
 <script setup lang="ts">
 import maplibregl from 'maplibre-gl';
-//@ts-ignore
 import "maplibre-gl/dist/maplibre-gl.css";
 import { onMounted } from 'vue';
 import {TMapOptions} from '../../types';

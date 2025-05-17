@@ -21,7 +21,7 @@ defineProps<{
 <style scoped>
 .maps-container {
     display: flex;
-    height: 100vh;
-    width: 100vw;
+    height: 400px;
+    width: 100%;
 }
 </style>

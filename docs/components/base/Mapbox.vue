@@ -4,7 +4,6 @@
 
 <script setup lang="ts">
 import mapboxgl from 'mapbox-gl';
-// @ts-ignore
 import "mapbox-gl/dist/mapbox-gl.css";
 import { onMounted } from 'vue';
 import {TMapOptions} from "../../types";
