@@ -13,14 +13,14 @@ export type TGltfModelOptions = {
     units?: TMeshUnits
 };
 
-export type TLineModelOptions = {
+export type TModelOptions = {
     type: "mesh",
     id: string,
     mesh: BABYLON.AbstractMesh,
     position: TPosition
 }
 
-export type TAnyModelOptions = TGltfModelOptions | TLineModelOptions
+export type TAnyModelOptions = TGltfModelOptions | TModelOptions
 
 export class BabyMap {
     readonly customLayerId = "babymap-layer";
