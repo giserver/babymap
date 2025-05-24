@@ -24,4 +24,4 @@ export type TAxis = "x" | "y" | "z";
 
 export type TPosition = [number , number] | [number, number, number] | { lng: number, lat: number, alt?: number };
 
-export type TMeshUnits = "meter" | "lnglat";
+export type TMeshUnits = "meter" | "screen";

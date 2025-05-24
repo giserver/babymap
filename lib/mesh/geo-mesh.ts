@@ -40,11 +40,11 @@ export class GeoMesh {
         rootMesh.rotation.x = Math.PI / 2;
 
         // x设置为复数的作用是模型左右反了
-        if (units === 'lnglat') {
-            rootMesh.scaling.set(-scale, scale, scale);
-        } else {
+        if (units === 'meter') {
             const s = math.projectedUnitsPerMeter(position[1]) * scale;
             rootMesh.scaling.set(-s, s, s);
+        } else {
+            rootMesh.scaling.set(-scale, scale, scale);
         }
 
         rootMesh.parent = world;
