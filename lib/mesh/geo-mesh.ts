@@ -16,6 +16,7 @@ type TGeoMeshFromAbstractMeshOptions = {
     world: BABYLON.AbstractMesh,
     mesh: BABYLON.AbstractMesh,
     position: TPosition,
+    units?: TMeshUnits
 }
 
 export class GeoMesh {
@@ -64,6 +65,12 @@ export class GeoMesh {
         options.mesh.position = math.projectToWorld(options.position);
         options.mesh.parent = options.world;
         options.mesh.name = options.id;
+
+        if (options.units !== 'lnglat') {
+            const position = math.positionArray(options.position);
+            const s = math.projectedUnitsPerMeter(position[1]) * 1;
+            options.mesh.scaling.set(-s, s, s);
+        }
 
         return new GeoMesh(options.id, options.mesh, [options.mesh], []);
     }

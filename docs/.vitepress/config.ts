@@ -74,14 +74,19 @@ export default {
                 text: '功能',
                 collapsed: true,
                 base: "/pages/features/",
-                items: [
-                    {
-                        text: "线",
-                        items: [
-                            { text: "基本", link: "line"},
-                            { text: "流光", link: "line/flow"}
-                        ]
-                    }
+                items: [{
+                    text: "基础",
+                    items: [
+                        { text: "mesh", link: "base/mesh" }
+                    ]
+                },
+                {
+                    text: "线",
+                    items: [
+                        { text: "基本", link: "line" },
+                        { text: "流光", link: "line/flow" }
+                    ]
+                }
                 ]
             }
         ],

@@ -17,7 +17,8 @@ export type TModelOptions = {
     type: "mesh",
     id: string,
     mesh: BABYLON.AbstractMesh,
-    position: TPosition
+    position: TPosition,
+    units?: TMeshUnits
 }
 
 export type TAnyModelOptions = TGltfModelOptions | TModelOptions
@@ -43,6 +44,7 @@ export class BabyMap {
             this.bjsEngine.wipeCaches(true);
         };
         scene.createDefaultCameraOrLight(false, false, true);
+        (scene.defaultMaterial as BABYLON.StandardMaterial).sideOrientation = 0;
         this.bjsScene = scene;
 
         this.cameraSyncManager = new CameraSyncManager(map, scene.activeCamera!);
