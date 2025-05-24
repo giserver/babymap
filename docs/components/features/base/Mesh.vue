@@ -18,7 +18,8 @@ function mapboxLoaded(map: mapboxgl.Map) {
         id: "box",
         type: 'mesh',
         mesh: box,
-        position: [...center, 5]
+        position: [...center, 5],
+        units:'meter'
     });
 }
 

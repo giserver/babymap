@@ -49,15 +49,10 @@ export class BabyMap {
 
         this.cameraSyncManager = new CameraSyncManager(map, scene.activeCamera!);
 
-        (scene.lights[0] as BABYLON.HemisphericLight).direction.y = -0.5;
-        const sunlight = new BABYLON.DirectionalLight("babymap-sun-light", new BABYLON.Vector3(0, 0.5, 0), scene);
-        sunlight.position.set(0, 80000000, -100000000);
-        sunlight.autoUpdateExtends = true;
-
-        scene.lights.forEach(l => {
-            l.parent = this.cameraSyncManager.world;
-        });
-
+        const light = scene.lights[0] as BABYLON.HemisphericLight;
+        light.direction.set(0, -1.5, 1);
+        light.parent = this.cameraSyncManager.world;
+        
         const that = this;
         map.addLayer({
             id: this.customLayerId,

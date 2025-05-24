@@ -45,11 +45,21 @@ const points = [
     [120.021, 30.0110],] as Array<[number, number]>;
 
 function mapboxLoaded(map: mapboxgl.Map) {
+    map.setConfigProperty('basemap', 'lightPreset', 'night');
+    map.setFog({
+        'range': [-1, 2],
+        'horizon-blend': 0.3,
+        'color': '#242B4B',
+        'high-color': '#161B36',
+        'space-color': '#0B1026',
+        'star-intensity': 0.8
+    });
+
     const babymap = new BabyMap(map);
     const glow = new BABYLON.GlowLayer('glow', babymap.bjsScene, {
         blurKernelSize: 32,
     });
-    glow.intensity = 2;
+    glow.intensity = 8;
 
     const line = GeoMeshBuilder.createGreasedLine({
         id: "line",
@@ -84,7 +94,7 @@ function maplibreLoaded(map: maplibregl.Map) {
     const glow = new BABYLON.GlowLayer('glow', babymap.bjsScene, {
         blurKernelSize: 32,
     });
-    glow.intensity = 2;
+    glow.intensity = 10;
 
     const line = GeoMeshBuilder.createGreasedLine({
         id: "line",

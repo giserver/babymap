@@ -66,7 +66,7 @@ export class GeoMesh {
         options.mesh.parent = options.world;
         options.mesh.name = options.id;
 
-        if (options.units !== 'lnglat') {
+        if (options.units === 'meter') {
             const position = math.positionArray(options.position);
             const s = math.projectedUnitsPerMeter(position[1]) * 1;
             options.mesh.scaling.set(-s, s, s);
