@@ -43,16 +43,17 @@ export class BabyMap {
         scene.beforeRender = () => {
             this.bjsEngine.wipeCaches(true);
         };
-        scene.createDefaultCameraOrLight(false, false, true);
+        scene.createDefaultCamera(false, false, true);
         (scene.defaultMaterial as BABYLON.StandardMaterial).sideOrientation = 0;
         this.bjsScene = scene;
 
         this.cameraSyncManager = new CameraSyncManager(map, scene.activeCamera!);
 
-        const light = scene.lights[0] as BABYLON.HemisphericLight;
-        light.direction.set(0, -1.5, 1);
-        light.parent = this.cameraSyncManager.world;
-        
+        const light1 = new BABYLON.HemisphericLight("light-default1", new BABYLON.Vector3(0, -1.5, 1), scene);
+        light1.intensity = 0.5
+        const light2 = new BABYLON.HemisphericLight("light-default2", new BABYLON.Vector3(0, 0.5, 1), scene);
+        light2.intensity = 0.5
+
         const that = this;
         map.addLayer({
             id: this.customLayerId,
