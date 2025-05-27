@@ -18,6 +18,9 @@ function mapboxLoaded(map: mapboxgl.Map) {
         }
     });
     const box = BABYLON.MeshBuilder.CreateBox("box", { size: 10 });
+    const box_copy = box.clone();
+    box.renderOverlay = true;
+
     babymap.addModel({
         id: "box",
         type: 'mesh',
@@ -25,6 +28,14 @@ function mapboxLoaded(map: mapboxgl.Map) {
         position: [...center, 5],
         units: 'meter',
         pickable: true
+    });
+
+    babymap.addModel({
+        id: "box_copy",
+        type: 'mesh',
+        mesh: box_copy,
+        position: [120.00015, 30, 5],
+        units: 'meter',
     });
 }
 
@@ -35,7 +46,11 @@ function maplibreLoaded(map: maplibregl.Map) {
             alert(mesh.id);
         }
     });
+    
     const box = BABYLON.MeshBuilder.CreateBox("box", { size: 10 });
+    const box_copy = box.clone();
+    box.renderOverlay = true;
+
     babymap.addModel({
         id: "box",
         type: 'mesh',
@@ -43,6 +58,14 @@ function maplibreLoaded(map: maplibregl.Map) {
         position: [...center, 5],
         units: 'meter',
         pickable: true
+    });
+
+    babymap.addModel({
+        id: "box_copy",
+        type: 'mesh',
+        mesh: box_copy,
+        position: [120.00015, 30, 5],
+        units: 'meter',
     });
 }
 

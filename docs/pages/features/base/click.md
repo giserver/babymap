@@ -16,6 +16,9 @@ const babymap = new BabyMap(map, {
 });
 
 const box = BABYLON.MeshBuilder.CreateBox("box", { size: 10 });
+const box_copy = box.clone();
+box.renderOverlay = true;
+
 babymap.addModel({
     id: "box",
     type: 'mesh',
@@ -23,6 +26,15 @@ babymap.addModel({
     position: [...center, 5],
     units: 'meter',
     pickable: true            // 设置mesh可以点击
+});
+
+// 不可点击
+babymap.addModel({
+    id: "box_copy",
+    type: 'mesh',
+    mesh: box_copy,
+    position: [120.00015, 30, 5],
+    units: 'meter',
 });
 
 ```
