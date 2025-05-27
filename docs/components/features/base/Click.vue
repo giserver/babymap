@@ -12,27 +12,37 @@ import Maps from '../../base/Maps.vue';
 const center = [120, 30] as [number, number];
 
 function mapboxLoaded(map: mapboxgl.Map) {
-    const babymap = new BabyMap(map);
+    const babymap = new BabyMap(map, {
+        onPicked: (mesh) => {
+            alert(mesh.id);
+        }
+    });
     const box = BABYLON.MeshBuilder.CreateBox("box", { size: 10 });
     babymap.addModel({
         id: "box",
         type: 'mesh',
         mesh: box,
         position: [...center, 5],
-        units: 'meter'
+        units: 'meter',
+        pickable: true
     });
 }
 
 function maplibreLoaded(map: maplibregl.Map) {
 
-    const babymap = new BabyMap(map);
+    const babymap = new BabyMap(map, {
+        onPicked: (mesh) => {
+            alert(mesh.id);
+        }
+    });
     const box = BABYLON.MeshBuilder.CreateBox("box", { size: 10 });
     babymap.addModel({
         id: "box",
         type: 'mesh',
         mesh: box,
         position: [...center, 5],
-        units: 'meter'
+        units: 'meter',
+        pickable: true
     });
 }
 

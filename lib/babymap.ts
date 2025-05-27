@@ -13,19 +13,25 @@ export type TModelOptions = {
     type: "mesh",
 } & Omit<TGeoMeshFromAbstractMeshOptions, "world">;
 
-export type TAnyModelOptions = TGltfModelOptions | TModelOptions
+export type TAnyModelOptions = TGltfModelOptions | TModelOptions;
+
+export type TBabyMapOptions = {
+    onPicked?: (mesh: GeoMesh) => void
+}
 
 export class BabyMap {
     readonly customLayerId = "babymap-layer";
     readonly bjsEngine: BABYLON.Engine;
     readonly bjsScene: BABYLON.Scene;
     readonly cameraSyncManager: CameraSyncManager;
+
+    private gizmoManager: BABYLON.GizmoManager;
     private geoMeshes = new Map<string, GeoMesh>();
 
     /**
      *
      */
-    constructor(private map: TMap) {
+    constructor(private map: TMap, options: TBabyMapOptions = {}) {
         BABYLON.RegisterSceneLoaderPlugin(new GLTFFileLoader());
 
         this.bjsEngine = new BABYLON.Engine(map.getCanvas(), true, { useHighPrecisionMatrix: true }, true);
@@ -40,11 +46,12 @@ export class BabyMap {
         this.bjsScene = scene;
 
         this.cameraSyncManager = new CameraSyncManager(map, scene.activeCamera!);
+        this.gizmoManager = new BABYLON.GizmoManager(this.bjsScene);
 
         const light1 = new BABYLON.HemisphericLight("light-default1", new BABYLON.Vector3(0, -1.5, 1), scene);
-        light1.intensity = 0.5
+        light1.intensity = 0.5;
         const light2 = new BABYLON.HemisphericLight("light-default2", new BABYLON.Vector3(0, 0.5, 1), scene);
-        light2.intensity = 0.5
+        light2.intensity = 0.5;
 
         const that = this;
         map.addLayer({
@@ -59,6 +66,12 @@ export class BabyMap {
                 that.bjsScene.render(false);
                 that.map.triggerRepaint();
             }
+        });
+
+        (map as any).on('click', ({ point }: { point: { x: number, y: number } }) => {
+            const geoMesh = this.getGeoMeshByScreenPoint(point.x, point.y);
+            if(geoMesh)
+                options.onPicked?.(geoMesh);
         });
     }
 
@@ -115,7 +128,11 @@ export class BabyMap {
      * @returns 
      */
     getGeoMeshByScreenPoint(x: number, y: number) {
-        const mesh = this.bjsScene.pick(x, y).pickedMesh;
+        const mesh = this.bjsScene.pick(x, y, m => {
+            const pm = this.findGeoMeshBySubMesh(m);
+            return pm?.pickable === true;
+        }).pickedMesh;
+
         if (mesh !== null) {
             return this.findGeoMeshBySubMesh(mesh);
         }

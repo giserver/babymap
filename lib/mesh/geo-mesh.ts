@@ -6,7 +6,8 @@ type TGeoMeshBaseOptions = {
     id: string,
     world: BABYLON.AbstractMesh,
     position: TPosition,
-    units?: TMeshUnits
+    units?: TMeshUnits,
+    pickable?: boolean,
 }
 
 export type TGeoMeshFromAssetContainerOptions = {
@@ -24,11 +25,12 @@ export class GeoMesh {
         readonly id: string,
         readonly rootMesh: BABYLON.AbstractMesh,
         readonly originMeshes: BABYLON.AbstractMesh[],
-        readonly animationGroups: BABYLON.AnimationGroup[]) {
+        readonly animationGroups: BABYLON.AnimationGroup[],
+        readonly pickable?: boolean) {
     }
 
     static fromAssetContainer(
-        { id, container, position, world, units, scale }: TGeoMeshFromAssetContainerOptions) {
+        { id, container, position, world, units, scale, pickable }: TGeoMeshFromAssetContainerOptions) {
 
         position = math.positionArray(position);
         scale ??= 1;
@@ -53,7 +55,7 @@ export class GeoMesh {
         container.animationGroups.forEach(g => g.stop());
 
         container.addAllToScene();
-        return new GeoMesh(id, rootMesh, container.meshes, container.animationGroups);
+        return new GeoMesh(id, rootMesh, container.meshes, container.animationGroups, pickable);
     }
 
     static fromAbstractMesh(options: TGeoMeshFromAbstractMeshOptions) {
@@ -67,7 +69,7 @@ export class GeoMesh {
             options.mesh.scaling.set(-s, s, s);
         }
 
-        return new GeoMesh(options.id, options.mesh, [options.mesh], []);
+        return new GeoMesh(options.id, options.mesh, [options.mesh], [], options.pickable);
     }
 
     remove() {

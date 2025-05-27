@@ -76,9 +76,10 @@ export default {
                 base: "/pages/features/",
                 items: [{
                     text: "基础",
-                    collapsed:false,
+                    collapsed: false,
                     items: [
-                        { text: "mesh", link: "base/mesh" }
+                        { text: "mesh", link: "base/mesh" },
+                        { text: "点击", link: "base/click" }
                     ]
                 },
                 {
