@@ -91,7 +91,7 @@ export class BabyMap {
      * 删除geomesh
      * @param id 
      */
-    removeModel(id: string) {
+    removeGeoMesh(id: string) {
         const geoMesh = this.geoMeshes.get(id);
         if (geoMesh) {
             geoMesh.remove();
@@ -104,8 +104,21 @@ export class BabyMap {
      * @param id 
      * @returns 
      */
-    getModel(id: string){
-        return this.geoMeshes.get(id)?.rootMesh;
+    getGeoMesh(id: string) {
+        return this.geoMeshes.get(id);
+    }
+
+    /**
+     * 根据屏幕坐标获取mesh
+     * @param x 
+     * @param y 
+     * @returns 
+     */
+    getGeoMeshByScreenPoint(x: number, y: number) {
+        const mesh = this.bjsScene.pick(x, y).pickedMesh;
+        if (mesh !== null) {
+            return this.findGeoMeshBySubMesh(mesh);
+        }
     }
 
     /**
@@ -115,17 +128,17 @@ export class BabyMap {
      * @param subMesh 
      * @returns 
      */
-    findModelBySubMesh(subMesh: BABYLON.AbstractMesh){
-        function findParent(sub: BABYLON.AbstractMesh, callback: (p: BABYLON.AbstractMesh)=>boolean){
-            if(callback(sub)) return;
+    findGeoMeshBySubMesh(subMesh: BABYLON.AbstractMesh) {
+        function findParent(sub: BABYLON.AbstractMesh, callback: (p: BABYLON.AbstractMesh) => boolean) {
+            if (callback(sub)) return;
 
-            if(sub.parent !== null && sub.parent instanceof BABYLON.AbstractMesh)
-            findParent(sub.parent, callback);
+            if (sub.parent !== null && sub.parent instanceof BABYLON.AbstractMesh)
+                findParent(sub.parent, callback);
         }
 
-        let result: BABYLON.AbstractMesh | undefined;
-        findParent(subMesh, p=>{
-            result = this.getModel(p.name);
+        let result: GeoMesh | undefined;
+        findParent(subMesh, p => {
+            result = this.getGeoMesh(p.name);
             return p !== undefined;
         });
 
