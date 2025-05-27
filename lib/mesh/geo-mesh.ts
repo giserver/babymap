@@ -2,22 +2,21 @@ import * as BABYLON from '@babylonjs/core';
 import { TMeshUnits, TPosition } from '../types';
 import { math } from '../utils';
 
-type TGeoMeshFromAssetContainerOptions = {
+type TGeoMeshBaseOptions = {
     id: string,
     world: BABYLON.AbstractMesh,
-    container: BABYLON.AssetContainer,
-    position: TPosition,
-    scale?: number,
-    units?: TMeshUnits
-};
-
-type TGeoMeshFromAbstractMeshOptions = {
-    id: string,
-    world: BABYLON.AbstractMesh,
-    mesh: BABYLON.AbstractMesh,
     position: TPosition,
     units?: TMeshUnits
 }
+
+export type TGeoMeshFromAssetContainerOptions = {
+    container: BABYLON.AssetContainer,
+    scale?: number,
+} & TGeoMeshBaseOptions;
+
+export type TGeoMeshFromAbstractMeshOptions = {
+    mesh: BABYLON.AbstractMesh,
+} & TGeoMeshBaseOptions
 
 export class GeoMesh {
 

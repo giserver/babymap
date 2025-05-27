@@ -1,25 +1,17 @@
 import * as BABYLON from '@babylonjs/core';
 import { GLTFFileLoader } from '@babylonjs/loaders';
 import { CameraSyncManager } from './camera';
-import { TMap, TMeshUnits, TPosition } from './types';
-import { GeoMesh } from './mesh';
+import { TMap } from './types';
+import { GeoMesh, TGeoMeshFromAbstractMeshOptions, TGeoMeshFromAssetContainerOptions } from './mesh';
 
 export type TGltfModelOptions = {
     type: "gltf",
-    id: string,
     url: string,
-    position: TPosition,
-    scale?: number,
-    units?: TMeshUnits
-};
+} & Omit<Omit<TGeoMeshFromAssetContainerOptions, "world">, "container">;
 
 export type TModelOptions = {
     type: "mesh",
-    id: string,
-    mesh: BABYLON.AbstractMesh,
-    position: TPosition,
-    units?: TMeshUnits
-}
+} & Omit<TGeoMeshFromAbstractMeshOptions, "world">;
 
 export type TAnyModelOptions = TGltfModelOptions | TModelOptions
 
