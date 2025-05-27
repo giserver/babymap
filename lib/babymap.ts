@@ -87,11 +87,48 @@ export class BabyMap {
         this.geoMeshes.set(options.id, geoMesh!);
     }
 
+    /**
+     * 删除geomesh
+     * @param id 
+     */
     removeModel(id: string) {
         const geoMesh = this.geoMeshes.get(id);
         if (geoMesh) {
             geoMesh.remove();
             this.geoMeshes.delete(id);
         }
+    }
+
+    /**
+     * 获取添加的geomeh时创建的rootmesh
+     * @param id 
+     * @returns 
+     */
+    getModel(id: string){
+        return this.geoMeshes.get(id)?.rootMesh;
+    }
+
+    /**
+     * 根据子节点找到对应的父级mesh
+     * 
+     * 如：点击事件获取的是子mesh，查询创建geomesh时的rootmesh
+     * @param subMesh 
+     * @returns 
+     */
+    findModelBySubMesh(subMesh: BABYLON.AbstractMesh){
+        function findParent(sub: BABYLON.AbstractMesh, callback: (p: BABYLON.AbstractMesh)=>boolean){
+            if(callback(sub)) return;
+
+            if(sub.parent !== null && sub.parent instanceof BABYLON.AbstractMesh)
+            findParent(sub.parent, callback);
+        }
+
+        let result: BABYLON.AbstractMesh | undefined;
+        findParent(subMesh, p=>{
+            result = this.getModel(p.name);
+            return p !== undefined;
+        });
+
+        return result;
     }
 }
