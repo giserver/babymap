@@ -85,7 +85,7 @@ function mapboxLoaded(map: mapboxgl.Map) {
     babymap.addModel({
         id: "line",
         type: 'mesh',
-        ...line
+        ...line,
     });
 }
 

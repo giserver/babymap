@@ -19,13 +19,21 @@ function mapboxLoaded(map: mapboxgl.Map) {
         type: 'mesh',
         mesh: box,
         position: [...center, 5],
-        units:'meter'
+        units: 'meter'
     });
 }
 
 function maplibreLoaded(map: maplibregl.Map) {
 
     const babymap = new BabyMap(map);
+    const box = BABYLON.MeshBuilder.CreateBox("box", { size: 10 });
+    babymap.addModel({
+        id: "box",
+        type: 'mesh',
+        mesh: box,
+        position: [...center, 5],
+        units: 'meter'
+    });
 }
 
 </script>
