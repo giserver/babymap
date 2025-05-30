@@ -13,6 +13,7 @@
 import { BabyMap } from "../../../../lib";
 import Mapbox from "../../base/Mapbox.vue";
 import * as BABYLON from "@babylonjs/core";
+import "@babylonjs/inspector";
 
 const center = [120, 30] as [number, number];
 let babymap: BabyMap;
@@ -45,7 +46,13 @@ function handleLoaded(map: mapboxgl.Map) {
     units: "meter",
     pickable: true,
   });
+
+  //babymap.bjsScene.debugLayer.show();
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+:deep(#scene-explorer-host) {
+  z-index: 10;
+}
+</style>

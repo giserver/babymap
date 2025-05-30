@@ -84,15 +84,24 @@ export class BabyMap {
       },
     });
 
-    (map as any).on(
-      "click",
-      ({ point }: { point: { x: number; y: number } }) => {
-        const geoMesh = this.getGeoMeshByScreenPoint(point.x, point.y);
-        if (geoMesh) {
-          options.onPicked?.(geoMesh);
+    this.bjsScene.onPointerDown = (_, pickInfo) => {
+      if (pickInfo.pickedMesh) {
+        const geomesh = this.findGeoMeshBySubMesh(pickInfo.pickedMesh);
+        if (geomesh?.pickable) {
+          options.onPicked?.(geomesh);
         }
       }
-    );
+    };
+
+    // (map as any).on(
+    //   "click",
+    //   ({ point }: { point: { x: number; y: number } }) => {
+    //     const geoMesh = this.getGeoMeshByScreenPoint(point.x, point.y);
+    //     if (geoMesh) {
+    //       options.onPicked?.(geoMesh);
+    //     }
+    //   }
+    // );
   }
 
   async addModel(options: TAnyModelOptions) {

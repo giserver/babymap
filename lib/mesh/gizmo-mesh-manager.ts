@@ -7,6 +7,8 @@ export class GizmoManager {
   constructor(public bjsScene: BABYLON.Scene) {
     this.gizmoManager = new BABYLON.GizmoManager(bjsScene);
     this.gizmoManager.positionGizmoEnabled = true;
+    // this.gizmoManager.scaleGizmoEnabled = true;
+    this.gizmoManager.rotationGizmoEnabled = true;
 
     window.addEventListener("keydown", (e) => this.attachControl(e), false);
     window.addEventListener("keyup", (e) => this.detachControl(e), false);
