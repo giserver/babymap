@@ -1,164 +1,189 @@
-import * as BABYLON from '@babylonjs/core';
-import { GLTFFileLoader } from '@babylonjs/loaders';
-import { CameraSyncManager } from './camera';
-import { TMap } from './types';
-import { GeoMesh, TGeoMeshFromAbstractMeshOptions, TGeoMeshFromAssetContainerOptions } from './mesh';
+import * as BABYLON from "@babylonjs/core";
+import { GLTFFileLoader } from "@babylonjs/loaders";
+import { CameraSyncManager } from "./camera";
+import { TMap } from "./types";
+import {
+  GeoMesh,
+  GizmoManager,
+  TGeoMeshFromAbstractMeshOptions,
+  TGeoMeshFromAssetContainerOptions,
+} from "./mesh";
 
 export type TGltfModelOptions = {
-    type: "gltf",
-    url: string,
+  type: "gltf";
+  url: string;
 } & Omit<Omit<TGeoMeshFromAssetContainerOptions, "world">, "container">;
 
 export type TModelOptions = {
-    type: "mesh",
+  type: "mesh";
 } & Omit<TGeoMeshFromAbstractMeshOptions, "world">;
 
 export type TAnyModelOptions = TGltfModelOptions | TModelOptions;
 
 export type TBabyMapOptions = {
-    onPicked?: (mesh: GeoMesh) => void
-}
+  onPicked?: (mesh: GeoMesh) => void;
+};
 
 export class BabyMap {
-    readonly customLayerId = "babymap-layer";
-    readonly bjsEngine: BABYLON.Engine;
-    readonly bjsScene: BABYLON.Scene;
-    readonly cameraSyncManager: CameraSyncManager;
+  readonly customLayerId = "babymap-layer";
+  readonly bjsEngine: BABYLON.Engine;
+  readonly bjsScene: BABYLON.Scene;
+  readonly cameraSyncManager: CameraSyncManager;
+  readonly gizmoManager: GizmoManager;
 
-    private gizmoManager: BABYLON.GizmoManager;
-    private geoMeshes = new Map<string, GeoMesh>();
+  private geoMeshes = new Map<string, GeoMesh>();
 
-    /**
-     *
-     */
-    constructor(private map: TMap, options: TBabyMapOptions = {}) {
-        BABYLON.RegisterSceneLoaderPlugin(new GLTFFileLoader());
+  /**
+   *
+   */
+  constructor(private map: TMap, options: TBabyMapOptions = {}) {
+    BABYLON.RegisterSceneLoaderPlugin(new GLTFFileLoader());
 
-        this.bjsEngine = new BABYLON.Engine(map.getCanvas(), true, { useHighPrecisionMatrix: true }, true);
-        const scene = new BABYLON.Scene(this.bjsEngine, {});
-        scene.autoClear = false;
-        scene.detachControl();
-        scene.beforeRender = () => {
-            this.bjsEngine.wipeCaches(true);
-        };
-        scene.createDefaultCamera(false, false, true);
-        (scene.defaultMaterial as BABYLON.StandardMaterial).sideOrientation = 0;
-        this.bjsScene = scene;
+    this.bjsEngine = new BABYLON.Engine(
+      map.getCanvas(),
+      true,
+      { useHighPrecisionMatrix: true },
+      true
+    );
+    const scene = new BABYLON.Scene(this.bjsEngine, {});
+    scene.autoClear = false;
+    scene.detachControl();
+    scene.beforeRender = () => {
+      this.bjsEngine.wipeCaches(true);
+    };
+    scene.createDefaultCamera(false, false, true);
+    (scene.defaultMaterial as BABYLON.StandardMaterial).sideOrientation = 0;
+    this.bjsScene = scene;
 
-        this.cameraSyncManager = new CameraSyncManager(map, scene.activeCamera!);
-        this.gizmoManager = new BABYLON.GizmoManager(this.bjsScene);
+    this.cameraSyncManager = new CameraSyncManager(map, scene.activeCamera!);
+    this.gizmoManager = new GizmoManager(this.bjsScene);
 
-        const light1 = new BABYLON.HemisphericLight("light-default1", new BABYLON.Vector3(0, -1.5, 1), scene);
-        light1.intensity = 0.5;
-        const light2 = new BABYLON.HemisphericLight("light-default2", new BABYLON.Vector3(0, 0.5, 1), scene);
-        light2.intensity = 0.5;
+    const light1 = new BABYLON.HemisphericLight(
+      "light-default1",
+      new BABYLON.Vector3(0, -1.5, 1),
+      scene
+    );
+    light1.intensity = 0.5;
+    const light2 = new BABYLON.HemisphericLight(
+      "light-default2",
+      new BABYLON.Vector3(0, 0.5, 1),
+      scene
+    );
+    light2.intensity = 0.5;
 
-        const that = this;
-        map.addLayer({
-            id: this.customLayerId,
-            type: 'custom',
-            renderingMode: '3d',
+    const that = this;
+    map.addLayer({
+      id: this.customLayerId,
+      type: "custom",
+      renderingMode: "3d",
 
-            onAdd(map: TMap, gl: any) {
+      onAdd(map: TMap, gl: any) {},
+      render() {
+        that.bjsScene.render(false);
+        that.map.triggerRepaint();
+      },
+    });
 
-            },
-            render() {
-                that.bjsScene.render(false);
-                that.map.triggerRepaint();
-            }
-        });
-
-        (map as any).on('click', ({ point }: { point: { x: number, y: number } }) => {
-            const geoMesh = this.getGeoMeshByScreenPoint(point.x, point.y);
-            if(geoMesh)
-                options.onPicked?.(geoMesh);
-        });
-    }
-
-    async addModel(options: TAnyModelOptions) {
-        if (this.geoMeshes.has(options.id)) throw Error(`id: ${options.id} already existed`);
-
-        let geoMesh: GeoMesh;
-
-        if (options.type === 'gltf') {
-            const container = await BABYLON.LoadAssetContainerAsync(options.url, this.bjsScene);
-
-            geoMesh = GeoMesh.fromAssetContainer({
-                ...options,
-                container,
-                world: this.cameraSyncManager.world
-            });
-        }
-
-        else if (options.type === 'mesh') {
-            geoMesh = GeoMesh.fromAbstractMesh({
-                ...options,
-                world: this.cameraSyncManager.world
-            });
-        }
-
-        this.geoMeshes.set(options.id, geoMesh!);
-    }
-
-    /**
-     * 删除geomesh
-     * @param id 
-     */
-    removeGeoMesh(id: string) {
-        const geoMesh = this.geoMeshes.get(id);
+    (map as any).on(
+      "click",
+      ({ point }: { point: { x: number; y: number } }) => {
+        const geoMesh = this.getGeoMeshByScreenPoint(point.x, point.y);
         if (geoMesh) {
-            geoMesh.remove();
-            this.geoMeshes.delete(id);
+          options.onPicked?.(geoMesh);
         }
+      }
+    );
+  }
+
+  async addModel(options: TAnyModelOptions) {
+    if (this.geoMeshes.has(options.id))
+      throw Error(`id: ${options.id} already existed`);
+
+    let geoMesh: GeoMesh;
+
+    if (options.type === "gltf") {
+      const container = await BABYLON.LoadAssetContainerAsync(
+        options.url,
+        this.bjsScene
+      );
+
+      geoMesh = GeoMesh.fromAssetContainer({
+        ...options,
+        container,
+        world: this.cameraSyncManager.world,
+      });
+    } else if (options.type === "mesh") {
+      geoMesh = GeoMesh.fromAbstractMesh({
+        ...options,
+        world: this.cameraSyncManager.world,
+      });
     }
 
-    /**
-     * 获取添加的geomeh时创建的rootmesh
-     * @param id 
-     * @returns 
-     */
-    getGeoMesh(id: string) {
-        return this.geoMeshes.get(id);
+    this.geoMeshes.set(options.id, geoMesh!);
+  }
+
+  /**
+   * 删除geomesh
+   * @param id
+   */
+  removeGeoMesh(id: string) {
+    const geoMesh = this.geoMeshes.get(id);
+    if (geoMesh) {
+      geoMesh.remove();
+      this.geoMeshes.delete(id);
+    }
+  }
+
+  /**
+   * 获取添加的geomeh时创建的rootmesh
+   * @param id
+   * @returns
+   */
+  getGeoMesh(id: string) {
+    return this.geoMeshes.get(id);
+  }
+
+  /**
+   * 根据屏幕坐标获取mesh
+   * @param x
+   * @param y
+   * @returns
+   */
+  getGeoMeshByScreenPoint(x: number, y: number) {
+    const mesh = this.bjsScene.pick(x, y, (m) => {
+      const pm = this.findGeoMeshBySubMesh(m);
+      return pm?.pickable === true;
+    }).pickedMesh;
+
+    if (mesh !== null) {
+      return this.findGeoMeshBySubMesh(mesh);
+    }
+  }
+
+  /**
+   * 根据子节点找到对应的父级mesh
+   *
+   * 如：点击事件获取的是子mesh，查询创建geomesh时的rootmesh
+   * @param subMesh
+   * @returns
+   */
+  findGeoMeshBySubMesh(subMesh: BABYLON.AbstractMesh) {
+    function findParent(
+      sub: BABYLON.AbstractMesh,
+      callback: (p: BABYLON.AbstractMesh) => boolean
+    ) {
+      if (callback(sub)) return;
+
+      if (sub.parent !== null && sub.parent instanceof BABYLON.AbstractMesh)
+        findParent(sub.parent, callback);
     }
 
-    /**
-     * 根据屏幕坐标获取mesh
-     * @param x 
-     * @param y 
-     * @returns 
-     */
-    getGeoMeshByScreenPoint(x: number, y: number) {
-        const mesh = this.bjsScene.pick(x, y, m => {
-            const pm = this.findGeoMeshBySubMesh(m);
-            return pm?.pickable === true;
-        }).pickedMesh;
+    let result: GeoMesh | undefined;
+    findParent(subMesh, (p) => {
+      result = this.getGeoMesh(p.name);
+      return p !== undefined;
+    });
 
-        if (mesh !== null) {
-            return this.findGeoMeshBySubMesh(mesh);
-        }
-    }
-
-    /**
-     * 根据子节点找到对应的父级mesh
-     * 
-     * 如：点击事件获取的是子mesh，查询创建geomesh时的rootmesh
-     * @param subMesh 
-     * @returns 
-     */
-    findGeoMeshBySubMesh(subMesh: BABYLON.AbstractMesh) {
-        function findParent(sub: BABYLON.AbstractMesh, callback: (p: BABYLON.AbstractMesh) => boolean) {
-            if (callback(sub)) return;
-
-            if (sub.parent !== null && sub.parent instanceof BABYLON.AbstractMesh)
-                findParent(sub.parent, callback);
-        }
-
-        let result: GeoMesh | undefined;
-        findParent(subMesh, p => {
-            result = this.getGeoMesh(p.name);
-            return p !== undefined;
-        });
-
-        return result;
-    }
+    return result;
+  }
 }
