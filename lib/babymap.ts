@@ -98,6 +98,7 @@ export class BabyMap {
     //   ({ point }: { point: { x: number; y: number } }) => {
     //     const geoMesh = this.getGeoMeshByScreenPoint(point.x, point.y);
     //     if (geoMesh) {
+    //       console.log(geoMesh);
     //       options.onPicked?.(geoMesh);
     //     }
     //   }
@@ -176,21 +177,20 @@ export class BabyMap {
    * @param subMesh
    * @returns
    */
-  findGeoMeshBySubMesh(subMesh: BABYLON.AbstractMesh) {
+  findGeoMeshBySubMesh(subMesh: BABYLON.Node) {
     function findParent(
-      sub: BABYLON.AbstractMesh,
-      callback: (p: BABYLON.AbstractMesh) => boolean
+      sub: BABYLON.Node,
+      callback: (p: BABYLON.Node) => boolean
     ) {
       if (callback(sub)) return;
 
-      if (sub.parent !== null && sub.parent instanceof BABYLON.AbstractMesh)
-        findParent(sub.parent, callback);
+      if (sub.parent !== null) findParent(sub.parent, callback);
     }
 
     let result: GeoMesh | undefined;
     findParent(subMesh, (p) => {
       result = this.getGeoMesh(p.name);
-      return p !== undefined;
+      return result !== undefined;
     });
 
     return result;

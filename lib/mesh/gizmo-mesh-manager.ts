@@ -10,6 +10,8 @@ export class GizmoManager {
     // this.gizmoManager.scaleGizmoEnabled = true;
     this.gizmoManager.rotationGizmoEnabled = true;
 
+    this.gizmoManager.usePointerToAttachGizmos = false;
+
     window.addEventListener("keydown", (e) => this.attachControl(e), false);
     window.addEventListener("keyup", (e) => this.detachControl(e), false);
   }
@@ -31,6 +33,7 @@ export class GizmoManager {
 
   setMesh(mesh: GeoMesh) {
     if (this.isKeyDown) {
+      console.log(mesh);
       this.gizmoManager.attachableMeshes = [mesh.rootMesh];
       this.gizmoManager.attachToMesh(mesh.rootMesh);
     }
